@@ -65,13 +65,17 @@
     <span style="color:#FFD700">總節省 ¥3,000+</span>
 </div>
 
-<!-- 班機資訊彈窗 -->
+<!-- 班機資訊彈窗 - 關鍵改這裡 -->
 <div id="flight-modal" class="modal" onclick="if(event.target===this)this.style.display='none'">
     <div class="modal-content">
         <span class="close" onclick="document.getElementById('flight-modal').style.display='none'">×</span>
         <h2 style="margin:15px 0;">班機資訊詳情</h2>
-        <img src="https://raw.githubusercontent.com/NoxianVBD/Trip/main/flight-schedule.jpg" alt="班機資訊">
-        <p style="margin-top:15px;color:#e74c3c;font-size:14px;">去程 IT750　12:00 TPE → 15:00 OIT<br>回程 IT241　10:55 FUK → 12:40 TPE　座位 8A</p>
+        <img src="flight-schedule.jpg" 
+             onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/NoxianVBD/Trip/main/flight-schedule.jpg'"
+             alt="班機資訊" loading="eager">
+        <p style="margin-top:15px;color:#e74c3c;font-size:14px;">
+          去程 IT750　12:00 TPE → 15:00 OIT　　回程 IT241　10:55 FUK → 12:40 TPE　座位 8A
+        </p>
     </div>
 </div>
 
@@ -134,7 +138,7 @@ const trip={start:new Date('2025-12-10'),days:[
         {t:"15:30",title:"入住 華盛頓R&B 博多駅前第2",c:"博多口走4分",stay:true,lat:33.59015,lng:130.42128},
         {t:"17:00",title:"博多站地下街",c:"藥妝＋晚餐"}
     ]},
-    {d:"D4",date:"12/13（六）",title:"門司港＋關門隧道＋春帆樓",spots":[
+    {d:"D4",date:"12/13（六）",title:"門司港＋關門隧道＋春帆樓",spots:[
         {t:"09:00",title:"JR → 門司港站",c:"1小時10分",cost:2000,pass:"JR",save:2000,type:"jr"},
         {t:"10:30",title:"門司港復古街",c:"大正浪漫超好拍",lat:33.9475,lng:130.9625},
         {t:"11:30",title:"關門隧道人行道",c:"海底780m步行15-20分，免費！內涼帶水",lat:33.949,lng:130.95},
@@ -162,14 +166,10 @@ const trip={start:new Date('2025-12-10'),days:[
     ]}
 ]};
 
-const today = -1;
-
 function render(){
     const container=document.getElementById('timeline');
     let html='';
     trip.days.forEach((day,i)=>{
-        const active=i===today?'active':'';
-        const badge=i===today?'<span class="today-badge">今天</span>':'';
         let spots='';
         day.spots.forEach(s=>{
             const type=s.stay?'stay':(s.type||'');
@@ -189,9 +189,9 @@ function render(){
                 </div>`;
         });
         html+=`
-            <div class="day-group ${active}">
+            <div class="day-group">
                 <div class="day-header" onclick="this.parentNode.classList.toggle('active')">
-                    <div><div class="day-title">${day.d} ${day.title}${badge}</div>
+                    <div><div class="day-title">${day.d} ${day.title}</div>
                     <div style="font-size:12px;color:var(--sub)">${day.date}</div></div>
                     <div class="toggle">▼</div>
                 </div>
