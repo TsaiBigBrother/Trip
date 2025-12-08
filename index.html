@@ -172,8 +172,8 @@
 
 <script>
 const passInfo = { 
-    sunq:{title:"SUNQ Pass Northern Kyushu 2日券",info:"¥8,000，涵蓋北部九州所有高速/普通巴士",benefits:"D1機場→別府、D2由布院來回全包",save:"省 ¥3,600"},
-    jr:{title:"JR Northern Kyushu Rail Pass 3日券",info:"¥12,000，涵蓋北部九州所有JR線（含Sonic特急）",benefits:"D3別府→博多、D4門司港來回全包",save:"省 ¥8,000+"},
+    sunq:{title:"SUNQ Pass 北部九州 2日券",info:"¥8,000，涵蓋北部九州所有高速/普通巴士",benefits:"D1機場→別府、D2由布院來回全包",save:"省 ¥3,600"},
+    jr:{title:"JR 北九州 Rail Pass 3日券",info:"¥12,000，涵蓋北部九州所有JR線（含 Sonic 特急）",benefits:"D3別府→博多、D4門司港來回全包",save:"省 ¥8,000+"},
     dazaifu:{title:"太宰府一日券",info:"¥820，西鐵來回+太宰府市內巴士無限次",benefits:"光明禪寺、竈門神社交通全包",save:"省 ¥1,400+"},
     emergency:{title:"日本緊急電話",info:"警察：110<br>消防/救護：119<br>台灣駐福岡辦事處：+81-92-734-2810<br>信用卡掛失（台灣）：<br>國泰世華：+886-2-8073-1515<br>台新：+886-2-2655-3355<br>富邦：+886-2-8751-5151"}
 };
@@ -249,11 +249,22 @@ function closeModal(){
     document.getElementById('flight-modal').style.display='none';
 }
 
-// 【最終修正區】統一使用標準 Google Maps 網頁連結
+// 【最終修正】統一使用地點名稱和經緯度進行 Google 地圖查詢
 function openMap(lat,lng,name){
-    // 使用標準的 Google Maps 網頁格式，適用於所有瀏覽器。
-    // 在 iOS 上，如果 Google Maps App 未安裝，將在 Safari 中開啟。
-    const url = `https://maps.google.com/?q=${lat},${lng}`;
+    // 1. 確保查詢名稱是繁體中文
+    let queryName = name;
+    
+    // 2. 判斷是否需要加上「北九州」作為地理提示
+    if (!queryName.includes("站") && !queryName.includes("機場") && !queryName.includes("神社") && !queryName.includes("寺") && !queryName.includes("市") && !queryName.includes("市場") && !queryName.includes("橋")) {
+        queryName = queryName + " 北九州";
+    }
+    
+    // 3. 組合 Google Maps 查詢 URL (q=地點名稱 & ll=經緯度)
+    const encodedQuery = encodeURIComponent(queryName);
+    
+    // 使用 Google Maps 網頁連結，將地點名稱和經緯度都帶入
+    const url = `https://maps.google.com/?q=...${encodedQuery}&ll=${lat},${lng}`;
+    
     location.href = url;
 }
 
@@ -263,12 +274,13 @@ window.addEventListener('scroll', () => {
     fab.classList.toggle('show', window.scrollY > 300);
 });
 
-/* 完整行程資料（經緯度已修正） */
+/* 完整行程資料（已修正住宿點經緯度） */
 const trip={days:[ 
     {d:"D1",date:"12/10（三）",title:"大分機場 → 別府入住",spots:[
         {t:"15:00",title:"抵達大分機場 OIT (IT750)",c:"通關＋行李約45分<br><b onclick=\"closeAllModals();document.getElementById('flight-modal').style.display='flex'\">點這裡查看完整班機資訊</b>",lat:33.4806,lng:131.7355},
         {t:"15:50",title:"機場巴士 → 別府站",c:"50分直達",cost:1600,pass:"SUNQ (啟用此日)",save:1600,lat:33.2789,lng:131.4998,type:"sunq"},
-        {t:"16:40",title:"入住 亀の井ホテル別府",c:"站走6分，休息整理",stay:true,lat:33.2792,lng:131.5002},
+        // 經緯度已修正
+        {t:"16:40",title:"入住 亀の井ホテル別府",c:"站走6分，休息整理",stay:true,lat:33.2804,lng:131.5034},
         {t:"17:30",title:"晚餐：とよ常 別府駅前店",c:"人氣特上天丼",lat:33.2798,lng:131.5032}
     ]},
     {d:"D2",date:"12/11（四）",title:"由布院金鱗湖冬霧全日",spots:[
