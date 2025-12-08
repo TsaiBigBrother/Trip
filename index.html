@@ -125,7 +125,7 @@
     <div class="pass-tag sunq" data-modal="sunq">SUNQ Pass<br>D1-D2</div>
     <div class="pass-tag jr" data-modal="jr">JR北九州<br>3日券</div>
     <div class="pass-tag dazaifu" data-modal="dazaifu">太宰府<br>一日券</div>
-    <div class="pass-tag vjw" onclick="document.getElementById('vjw-modal').style.display='flex'">入境<br>QR Code</div>
+    <div class="pass-tag vjw" onclick="toggleVjwModal()">入境<br>QR Code</div>
     <div class="pass-tag emergency" data-modal="emergency">緊急<br>聯絡</div>
 </div>
 
@@ -135,9 +135,9 @@
     </svg>
 </div>
 
-<div id="vjw-modal" class="modal" onclick="if(event.target===this)this.style.display='none'">
+<div id="vjw-modal" class="modal" onclick="if(event.target===this)toggleVjwModal()">
     <div class="modal-content">
-        <span class="close" onclick="document.getElementById('vjw-modal').style.display='none'">×</span>
+        <span class="close" onclick="toggleVjwModal()">×</span>
         <h2 style="margin-bottom:15px;color:#2E86C1;">日本入境 QR Code</h2>
         <p style="margin-bottom:20px;color:#e74c3c;font-weight:600;">抵達大分機場後直接給移民官掃描</p>
         <img src="images/vjw_digital_qrcode.png" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/NoxianVBD/Trip/main/images/vjw_digital_qrcode.png'" alt="入境 QR Code">
@@ -145,9 +145,9 @@
     </div>
 </div>
 
-<div id="flight-modal" class="modal" onclick="if(event.target===this)this.style.display='none'">
+<div id="flight-modal" class="modal" onclick="if(event.target===this)closeModal()">
     <div class="modal-content">
-        <span class="close" onclick="document.getElementById('flight-modal').style.display='none'">×</span>
+        <span class="close" onclick="closeModal()">×</span>
         <h2 style="margin:15px 0;">班機資訊詳情</h2>
         <img src="images/flight-schedule.jpg" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/NoxianVBD/Trip/main/images/flight-schedule.jpg'" alt="班機資訊" style="max-width: 100%; height: auto;">
         <p style="margin-top:15px;color:#e74c3c;font-size:14.5px;">
@@ -178,12 +178,41 @@ const passInfo = {
     emergency:{title:"日本緊急電話",info:"警察：110<br>消防/救護：119<br>台灣駐福岡辦事處：+81-92-734-2810<br>信用卡掛失（台灣）：<br>國泰世華：+886-2-8073-1515<br>台新：+886-2-2655-3355<br>富邦：+886-2-8751-5151"}
 };
 
-// 實現手風琴效果 (Accordion) 的邏輯
+// 【新增】關閉所有 Modals 和 Day Groups 的中央控制器
+function closeAllModals() {
+    document.getElementById('modal').style.display = 'none';
+    document.getElementById('vjw-modal').style.display = 'none';
+    document.getElementById('flight-modal').style.display = 'none';
+    
+    // 確保行程列表 Accordion 也被關閉
+    document.querySelectorAll('.day-group').forEach(group => {
+        group.classList.remove('active');
+    });
+}
+
+// 【新增】QR Code 的開關/切換邏輯
+function toggleVjwModal() {
+    const vjwModal = document.getElementById('vjw-modal');
+    const isActive = vjwModal.style.display === 'flex';
+    
+    closeAllModals(); // 點擊時先關閉所有開啟的內容 (包括它自己)
+    
+    // 如果它原本是關閉的 (isActive=false)，則重新開啟
+    if (!isActive) {
+        vjwModal.style.display = 'flex';
+    }
+}
+
+// 實現手風琴效果 (Accordion) 的邏輯 (不變)
 function toggleDay(event) {
     const clickedGroup = event.currentTarget.parentNode;
     const isActive = clickedGroup.classList.contains('active');
-    const allGroups = document.querySelectorAll('.day-group');
+    
+    // 確保在開啟 Day Group 時，所有頂部 Modals 都是關閉的
+    closeAllModals(); 
 
+    const allGroups = document.querySelectorAll('.day-group');
+    
     // 1. 遍歷所有 day-group，將它們全部關閉
     allGroups.forEach(group => {
         group.classList.remove('active');
@@ -195,7 +224,11 @@ function toggleDay(event) {
     }
 }
 
+// 處理 Pass Modals 的開啟 (SunQ, JR, Emergency)
 function openModal(e){
+    // 【修正】點擊 Pass Icon 時，先關閉所有其他內容
+    closeAllModals(); 
+    
     const t = e.target.closest('.pass-tag')?.dataset.modal;
     if (!t) return;
     const pass = passInfo[t];
@@ -211,9 +244,13 @@ function openModal(e){
     `;
     document.getElementById('modal').style.display = 'flex';
 }
-function closeModal(){document.getElementById('modal').style.display='none';}
+function closeModal(){
+    // 讓 closeModal 函式只關閉 #modal，由 closeAllModals 處理所有關閉。
+    document.getElementById('modal').style.display='none';
+    document.getElementById('flight-modal').style.display='none';
+}
 
-// 修正 openMap URL 格式
+// 修正 openMap URL 格式 (不變)
 function openMap(lat,lng,name){
     const query = name.includes("站") || name.includes("機場") || name.includes("神社") || name.includes("寺") ? name : name + " 北九州";
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -221,22 +258,21 @@ function openMap(lat,lng,name){
     if (isIOS) {
         url = `https://maps.apple.com/?q=${encodeURIComponent(query)}`;
     } else {
-        // 修正後的 Google Maps 格式
         url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}&query_place_id=${lat},${lng}`;
     }
     location.href = url;
 }
 
-/* 回到頂部淡入 */
+/* 回到頂部淡入 (不變) */
 const fab = document.getElementById('backToTop');
 window.addEventListener('scroll', () => {
     fab.classList.toggle('show', window.scrollY > 300);
 });
 
-/* 完整行程資料（不變） */
+/* 完整行程資料 (不變) */
 const trip={days:[ 
     {d:"D1",date:"12/10（三）",title:"大分機場 → 別府入住",spots:[
-        {t:"15:00",title:"抵達大分機場 OIT (IT750)",c:"通關＋行李約45分<br><b onclick=\"document.getElementById('flight-modal').style.display='flex'\">點這裡查看完整班機資訊</b>",lat:33.4806,lng:131.7355},
+        {t:"15:00",title:"抵達大分機場 OIT (IT750)",c:"通關＋行李約45分<br><b onclick=\"closeAllModals();document.getElementById('flight-modal').style.display='flex'\">點這裡查看完整班機資訊</b>",lat:33.4806,lng:131.7355},
         {t:"15:50",title:"機場巴士 → 別府站",c:"50分直達",cost:1600,pass:"SUNQ (啟用此日)",save:1600,lat:33.2789,lng:131.4998,type:"sunq"},
         {t:"16:40",title:"入住 亀の井ホテル別府",c:"站走6分，休息整理",stay:true,lat:33.27892,lng:131.49985},
         {t:"17:30",title:"晚餐：とよ常 別府駅前店",c:"人氣特上天丼",lat:33.2789,lng:131.5008}
@@ -278,7 +314,7 @@ const trip={days:[
     ]},
     {d:"D7",date:"12/16（二）",title:"返程日",spots:[
         {t:"08:00",title:"博多站 → 福岡機場",c:"機場巴士15分 ¥280",lat:33.5843,lng:130.4465},
-        {t:"10:55",title:"IT241 起飛 FUK → TPE",c:"<b onclick=\"document.getElementById('flight-modal').style.display='flex'\">點這裡查看班機詳情</b>",lat:33.5843,lng:130.4465}
+        {t:"10:55",title:"IT241 起飛 FUK → TPE",c:"<b onclick=\"closeAllModals();document.getElementById('flight-modal').style.display='flex'\">點這裡查看班機詳情</b>",lat:33.5843,lng:130.4465}
     ]}
 ]};
 
