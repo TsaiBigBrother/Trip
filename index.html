@@ -249,18 +249,20 @@ function closeModal(){
     document.getElementById('flight-modal').style.display='none';
 }
 
-// 【修正重點區】修正 openMap URL 格式，確保手機 Google Maps 正確開啟
+// 【重要修正區】針對 iOS 使用 Google Maps URL Scheme
 function openMap(lat,lng,name){
-    const query = name.includes("站") || name.includes("機場") || name.includes("神社") || name.includes("寺") ? name : name + " 北九州";
+    // 不需要 query，直接使用經緯度定位最精確
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     let url;
+    
     if (isIOS) {
-        // Apple Maps (iOS) 使用名稱查詢
-        url = `https://maps.apple.com/?q=${encodeURIComponent(query)}`;
+        // 🚨 修正：使用 Google Maps App 的 URL Scheme 強制開啟 App
+        url = `comgooglemaps://?q=${lat},${lng}`;
     } else {
-        // Google Maps (Android/Web) 使用經緯度定位 (修正後的標準格式)
+        // Android/一般瀏覽器：使用標準 Google Maps 網頁連結
         url = `https://maps.google.com/?q=${lat},${lng}`;
     }
+    
     location.href = url;
 }
 
