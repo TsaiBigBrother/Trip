@@ -249,20 +249,11 @@ function closeModal(){
     document.getElementById('flight-modal').style.display='none';
 }
 
-// 【重要修正區】針對 iOS 使用 Google Maps URL Scheme
+// 【最終修正區】統一使用標準 Google Maps 網頁連結
 function openMap(lat,lng,name){
-    // 不需要 query，直接使用經緯度定位最精確
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    let url;
-    
-    if (isIOS) {
-        // 🚨 修正：使用 Google Maps App 的 URL Scheme 強制開啟 App
-        url = `comgooglemaps://?q=${lat},${lng}`;
-    } else {
-        // Android/一般瀏覽器：使用標準 Google Maps 網頁連結
-        url = `https://maps.google.com/?q=${lat},${lng}`;
-    }
-    
+    // 使用標準的 Google Maps 網頁格式，適用於所有瀏覽器。
+    // 在 iOS 上，如果 Google Maps App 未安裝，將在 Safari 中開啟。
+    const url = `https://maps.google.com/?q=${lat},${lng}`;
     location.href = url;
 }
 
