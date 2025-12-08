@@ -42,9 +42,13 @@
         header{
             background:linear-gradient(135deg,var(--primary),var(--accent));
             color:white;padding:24px 20px;text-align:center;
+            /* 修正頂部 padding 以適應固定欄位 */
             margin-top:calc(env(safe-area-inset-top) + 78px);
         }
-        @media (max-width:520px){header{margin-top:calc(env(safe-area-inset-top) + 102px);}}
+        @media (max-width:520px){
+            /* 手機版適應兩行按鈕高度 */
+            header{margin-top:calc(env(safe-area-inset-top) + 102px);}
+        }
 
         /* 回到頂部（你喜歡的 SVG 版） */
         .fab{
@@ -104,14 +108,12 @@
     <div class="pass-tag emergency" data-modal="emergency">緊急<br>聯絡</div>
 </div>
 
-<!-- 回到頂部按鈕 -->
 <div class="fab" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
     <svg viewBox="0 0 24 24" fill="none">
         <path d="M12 19V5M5 12l7-7 7 7"/>
     </svg>
 </div>
 
-<!-- modal 區塊不變 -->
 <div id="vjw-modal" class="modal" onclick="if(event.target===this)this.style.display='none'">
     <div class="modal-content">
         <span class="close" onclick="document.getElementById('vjw-modal').style.display='none'">×</span>
@@ -148,28 +150,52 @@
 <div class="container" id="timeline"></div>
 
 <script>
-const passInfo = { /* 不變，略 */ 
+const passInfo = { 
     sunq:{title:"SUNQ Pass Northern Kyushu 2日券",info:"¥8,000，涵蓋北部九州所有高速/普通巴士",benefits:"D1機場→別府、D2由布院來回全包",save:"省 ¥3,600"},
     jr:{title:"JR Northern Kyushu Rail Pass 3日券",info:"¥12,000，涵蓋北部九州所有JR線（含Sonic特急）",benefits:"D3別府→博多、D4門司港來回全包",save:"省 ¥8,000+"},
     dazaifu:{title:"太宰府一日券",info:"¥820，西鐵來回+太宰府市內巴士無限次",benefits:"光明禪寺、竈門神社交通全包",save:"省 ¥1,400+"},
     emergency:{title:"日本緊急電話",info:"警察：110<br>消防/救護：119<br>台灣駐福岡辦事處：+81-92-734-2810<br>信用卡掛失（台灣）：<br>國泰世華：+886-2-8073-1515<br>台新：+886-2-2655-3355<br>富邦：+886-2-8751-5151"}
 };
 
+// 【修正重點】優化 openModal 邏輯，避免 undefined
 function openModal(e){
-    const t=e.target.closest('.pass-tag')?.dataset.modal;
-    if(!t) return;
-    document.getElementById('modal-body').innerHTML=`<h2>${passInfo[t].title}</h2><p>${passInfo[t].info}</p><p><strong>好處/說明：</strong><br>${passInfo[t].benefits||passInfo[t].save}</p>`;
-    document.getElementById('modal').style.display='flex';
+    const t = e.target.closest('.pass-tag')?.dataset.modal;
+    if (!t) return;
+    
+    const pass = passInfo[t];
+    // 優先使用 benefits，若無則使用 save 屬性
+    const benefitOrSave = pass.benefits || pass.save;
+    
+    // 只有當 benefitOrSave 有內容時，才顯示「好處/說明」區塊
+    let benefitsHtml = '';
+    if (benefitOrSave) {
+        benefitsHtml = `<p style="margin-top:15px;"><strong>好處/說明：</strong><br>${benefitOrSave}</p>`;
+    }
+    
+    document.getElementById('modal-body').innerHTML = `
+        <h2 style="margin-bottom:10px;">${pass.title}</h2>
+        <p>${pass.info}</p>
+        ${benefitsHtml}
+    `;
+    
+    document.getElementById('modal').style.display = 'flex';
 }
 function closeModal(){document.getElementById('modal').style.display='none';}
 
-/* 關鍵修改：改用「景點名稱」搜尋，不再用經緯度數字 */
+// 【修正重點】修正 openMap URL 格式，確保地圖能正確開啟
 function openMap(lat,lng,name){
+    // 使用景點名稱進行搜索，更準確
     const query = name.includes("站") || name.includes("機場") || name.includes("神社") || name.includes("寺") ? name : name + " 北九州";
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const url = isIOS 
-        ? `https://maps.apple.com/?q=${encodeURIComponent(query)}`
-        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+    
+    let url;
+    if (isIOS) {
+        // Apple Maps
+        url = `https://maps.apple.com/?q=${encodeURIComponent(query)}`;
+    } else {
+        // Google Maps (通用格式)
+        url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+    }
     location.href = url;
 }
 
@@ -180,20 +206,52 @@ window.addEventListener('scroll', () => {
 });
 
 /* 完整行程資料（不變） */
-const trip={days:[ /* 全部資料跟原本完全一樣，放心使用 */ 
+const trip={days:[ 
     {d:"D1",date:"12/10（三）",title:"大分機場 → 別府入住",spots:[
         {t:"15:00",title:"抵達大分機場 OIT (IT750)",c:"通關＋行李約45分<br><b onclick=\"document.getElementById('flight-modal').style.display='flex'\">點這裡查看完整班機資訊</b>",lat:33.4806,lng:131.7355},
         {t:"15:50",title:"機場巴士 → 別府站",c:"50分直達",cost:1600,pass:"SUNQ (啟用此日)",save:1600,lat:33.2789,lng:131.4998,type:"sunq"},
         {t:"16:40",title:"入住 亀の井ホテル別府",c:"站走6分，休息整理",stay:true,lat:33.27892,lng:131.49985},
         {t:"17:30",title:"晚餐：とよ常 別府駅前店",c:"人氣特上天丼",lat:33.2789,lng:131.5008}
     ]},
-    /* 其餘 D2~D7 完全不變，已測試可正常顯示 */
-    {d:"D2",date:"12/11（四）",title:"由布院金鱗湖冬霧全日",spots:[{t:"07:30",title:"飯店 → 別府站西口",c:"步行6分",lat:33.2789,lng:131.4998},{t:"08:20",title:"36番巴士 → 由布院",c:"50分，SUNQ全涵蓋（省¥1,000）",cost:1000,pass:"SUNQ",save:1000,lat:33.262,lng:131.359,type:"sunq"},{t:"09:20-10:30",title:"金鱗湖 冬霧最美時段",c:"由布院站步行5分<br>12月中旬濃霧機率80%+",lat:33.2605,lng:131.36},{t:"10:30-12:30",title:"湯之坪街道散策 + 午餐",c:"B-speak瑞士捲、熱紅酒、蒸栗子",lat:33.263,lng:131.361},{t:"13:00-15:00",title:"Floral Village 花兒村莊",c:"龍貓、史努比、愛麗絲主題",lat:33.265,lng:131.365},{t:"15:00-16:20",title:"自由時間",c:"由布院足湯、咖啡廳"},{t:"16:30",title:"36番巴士 返回別府",c:"50分，SUNQ全涵蓋（省¥1,000）",cost:1000,pass:"SUNQ",save:1000,lat:33.2789,lng:131.4998,type:"sunq"}]},
-    {d:"D3",date:"12/12（五）",title:"別府纜車＋地獄精華 → 博多",spots:[{t:"08:20",title:"巴士 → 別府纜車",c:"41/50/51/52號，約25分，¥480（非SUNQ）",lat:33.3134,lng:131.4284},{t:"08:50",title:"別府纜車 (鶴見岳)",c:"來回¥1,800",lat:33.3134,lng:131.4284},{t:"11:00",title:"纜車 → 鐵輪地獄區",c:"15分直達海地獄門口",lat:33.31681,lng:131.48324,type:"sunq"},{t:"11:30",title:"地獄巡迴精華3個",c:"海地獄、鬼石坊主、灶地獄（單買¥1,350）",lat:33.3167,lng:131.4833},{t:"13:50",title:"Sonic特急 → 博多",c:"2小時，自由席",cost:10940,pass:"JR (啟用此日)",save:10940,lat:33.5902,lng:130.4205,type:"jr"},{t:"16:00",title:"入住 華盛頓R&B 博多駅前第2",c:"博多口步行4分",stay:true,lat:33.59015,lng:130.42128}]},
-    {d:"D4",date:"12/13（六）",title:"小倉城 → 下關 → 門司港藍翼橋",spots:[{t:"08:00",title:"博多 → 小倉城",c:"JR 52-68分",cost:2000,pass:"JR",save:2000,type:"jr",lat:33.8833,lng:130.8833},{t:"12:25",title:"唐戶市場壽司午餐",c:"週六最熱鬧！河豚握壽司必吃",lat:33.9568,lng:130.9415},{t:"16:00",title:"藍翼橋開合秀（最終場）",c:"60度升起＋夕陽",lat:33.9475,lng:130.9625},{t:"17:10",title:"門司港 → 博多",c:"約90分",cost:2200,pass:"JR",save:2200,type:"jr"}]},
-    {d:"D5",date:"12/14（日）",title:"太宰府全日（100%下坡版）",spots:[{t:"09:00",title:"博多 → 西鐵天神站",c:"地鐵7分→天神站買太宰府一日券¥820",lat:33.5902,lng:130.4205},{t:"09:25",title:"西鐵 → 太宰府站",c:"30-35分，一日券全包",pass:"太宰府一日券 (啟用此日)",save:1400,lat:33.5215,lng:130.535,type:"dazaifu"},{t:"09:50",title:"まほろば號巴士 → 竈門神社",c:"10分直達山上",lat:33.519,lng:130.524},{t:"10:00-14:00",title:"竈門神社 → 寶滿宮稻荷 → 天滿宮",c:"全程輕鬆下坡",lat:33.5215,lng:130.535},{t:"14:10",title:"光明禪寺",c:"冬日苔庭超夢幻 ¥500",lat:33.518,lng:130.532},{t:"17:00",title:"返回博多",c:"西鐵直達＋地鐵",pass:"太宰府一日券",type:"dazaifu"}]},
-    {d:"D6",date:"12/15（一）",title:"福岡最後採購",spots:[{t:"10:00",title:"天神地下街＋運河城",c:"藥妝、服飾、伴手禮全掃"},{t:"19:00",title:"一蘭總店或一幸舍",c:"最後一碗豚骨"}]},
-    {d:"D7",date:"12/16（二）",title:"返程日",spots:[{t:"08:00",title:"博多站 → 福岡機場",c:"機場巴士15分 ¥280",lat:33.5843,lng:130.4465},{t:"10:55",title:"IT241 起飛 FUK → TPE",c:"<b onclick=\"document.getElementById('flight-modal').style.display='flex'\">點這裡查看班機詳情</b>",lat:33.5843,lng:130.4465}]}
+    {d:"D2",date:"12/11（四）",title:"由布院金鱗湖冬霧全日",spots:[
+        {t:"07:30",title:"飯店 → 別府站西口",c:"步行6分",lat:33.2789,lng:131.4998},
+        {t:"08:20",title:"36番巴士 → 由布院",c:"50分，SUNQ全涵蓋（省¥1,000）",cost:1000,pass:"SUNQ",save:1000,lat:33.262,lng:131.359,type:"sunq"},
+        {t:"09:20-10:30",title:"金鱗湖 冬霧最美時段",c:"由布院站步行5分<br>12月中旬濃霧機率80%+",lat:33.2605,lng:131.36},
+        {t:"10:30-12:30",title:"湯之坪街道散策 + 午餐",c:"B-speak瑞士捲、熱紅酒、蒸栗子",lat:33.263,lng:131.361},
+        {t:"13:00-15:00",title:"Floral Village 花兒村莊",c:"龍貓、史努比、愛麗絲主題",lat:33.265,lng:131.365},
+        {t:"15:00-16:20",title:"自由時間",c:"由布院足湯、咖啡廳"},
+        {t:"16:30",title:"36番巴士 返回別府",c:"50分，SUNQ全涵蓋（省¥1,000）",cost:1000,pass:"SUNQ",save:1000,lat:33.2789,lng:131.4998,type:"sunq"}
+    ]},
+    {d:"D3",date:"12/12（五）",title:"別府纜車＋地獄精華 → 博多",spots:[
+        {t:"08:20",title:"巴士 → 別府纜車",c:"41/50/51/52號，約25分，¥480（非SUNQ）",lat:33.3134,lng:131.4284},
+        {t:"08:50",title:"別府纜車 (鶴見岳)",c:"來回¥1,800",lat:33.3134,lng:131.4284},
+        {t:"11:00",title:"纜車 → 鐵輪地獄區",c:"15分直達海地獄門口",lat:33.31681,lng:131.48324,type:"sunq"},
+        {t:"11:30",title:"地獄巡迴精華3個",c:"海地獄、鬼石坊主、灶地獄（單買¥1,350）",lat:33.3167,lng:131.4833},
+        {t:"13:50",title:"Sonic特急 → 博多",c:"2小時，自由席",cost:10940,pass:"JR (啟用此日)",save:10940,lat:33.5902,lng:130.4205,type:"jr"},
+        {t:"16:00",title:"入住 華盛頓R&B 博多駅前第2",c:"博多口步行4分",stay:true,lat:33.59015,lng:130.42128}
+    ]},
+    {d:"D4",date:"12/13（六）",title:"小倉城 → 下關 → 門司港藍翼橋",spots:[
+        {t:"08:00",title:"博多 → 小倉城",c:"JR 52-68分",cost:2000,pass:"JR",save:2000,type:"jr",lat:33.8833,lng:130.8833},
+        {t:"12:25",title:"唐戶市場壽司午餐",c:"週六最熱鬧！河豚握壽司必吃",lat:33.9568,lng:130.9415},
+        {t:"16:00",title:"藍翼橋開合秀（最終場）",c:"60度升起＋夕陽",lat:33.9475,lng:130.9625},
+        {t:"17:10",title:"門司港 → 博多",c:"約90分",cost:2200,pass:"JR",save:2200,type:"jr"}
+    ]},
+    {d:"D5",date:"12/14（日）",title:"太宰府全日（100%下坡版）",spots:[
+        {t:"09:00",title:"博多 → 西鐵天神站",c:"地鐵7分→天神站買太宰府一日券¥820",lat:33.5902,lng:130.4205},
+        {t:"09:25",title:"西鐵 → 太宰府站",c:"30-35分，一日券全包",pass:"太宰府一日券 (啟用此日)",save:1400,lat:33.5215,lng:130.535,type:"dazaifu"},
+        {t:"09:50",title:"まほろば號巴士 → 竈門神社",c:"10分直達山上",lat:33.519,lng:130.524},
+        {t:"10:00-14:00",title:"竈門神社 → 寶滿宮稻荷 → 天滿宮",c:"全程輕鬆下坡",lat:33.5215,lng:130.535},
+        {t:"14:10",title:"光明禪寺",c:"冬日苔庭超夢幻 ¥500",lat:33.518,lng:130.532},
+        {t:"17:00",title:"返回博多",c:"西鐵直達＋地鐵",pass:"太宰府一日券",type:"dazaifu"}
+    ]},
+    {d:"D6",date:"12/15（一）",title:"福岡最後採購",spots:[
+        {t:"10:00",title:"天神地下街＋運河城",c:"藥妝、服飾、伴手禮全掃"},
+        {t:"19:00",title:"一蘭總店或一幸舍",c:"最後一碗豚骨"}
+    ]},
+    {d:"D7",date:"12/16（二）",title:"返程日",spots:[
+        {t:"08:00",title:"博多站 → 福岡機場",c:"機場巴士15分 ¥280",lat:33.5843,lng:130.4465},
+        {t:"10:55",title:"IT241 起飛 FUK → TPE",c:"<b onclick=\"document.getElementById('flight-modal').style.display='flex'\">點這裡查看班機詳情</b>",lat:33.5843,lng:130.4465}
+    ]}
 ]};
 
 function render(){
