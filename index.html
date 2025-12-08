@@ -34,21 +34,27 @@
         .pass-tag.dazaifu{background:var(--dazaifu);}
         .pass-tag.vjw{background:#2E86C1;}
         .pass-tag.emergency{background:#e74c3c;}
+        
+        /* 【修正重點 1】調整小螢幕下的寬度分配 */
         @media (max-width:520px){
             .pass-bar{gap:8px;padding:8px 10px;padding-top:max(env(safe-area-inset-top),18px);}
-            .pass-tag{font-size:12.5px;padding:9px 4px;min-width:86px;}
+            .pass-tag{font-size:12.5px;padding:9px 4px;min-width:80px;} /* 略微減少最小寬度 */
+            
+            /* 讓緊急聯絡 (emergency) 佔用最小寬度，以釋放空間 */
+            .pass-tag.emergency {
+                min-width: 70px; 
+                font-size: 12px;
+                padding: 9px 2px;
+            }
         }
 
         header{
             background:linear-gradient(135deg,var(--primary),var(--accent));
             color:white;padding:24px 20px;text-align:center;
-            /* 修正頂部 padding 以適應固定欄位 */
             margin-top:calc(env(safe-area-inset-top) + 78px);
         }
-        @media (max-width:520px){
-            /* 手機版適應兩行按鈕高度 */
-            header{margin-top:calc(env(safe-area-inset-top) + 102px);}
-        }
+        /* 【修正重點 2】根據單行高度調整 margin-top */
+        @media (max-width:520px){header{margin-top:calc(env(safe-area-inset-top) + 78px);}} 
 
         /* 回到頂部（你喜歡的 SVG 版） */
         .fab{
@@ -157,7 +163,7 @@ const passInfo = {
     emergency:{title:"日本緊急電話",info:"警察：110<br>消防/救護：119<br>台灣駐福岡辦事處：+81-92-734-2810<br>信用卡掛失（台灣）：<br>國泰世華：+886-2-8073-1515<br>台新：+886-2-2655-3355<br>富邦：+886-2-8751-5151"}
 };
 
-// 【修正重點】優化 openModal 邏輯，避免 undefined
+// 優化 openModal 邏輯，避免 undefined
 function openModal(e){
     const t = e.target.closest('.pass-tag')?.dataset.modal;
     if (!t) return;
@@ -182,7 +188,7 @@ function openModal(e){
 }
 function closeModal(){document.getElementById('modal').style.display='none';}
 
-// 【修正重點】修正 openMap URL 格式，確保地圖能正確開啟
+// 修正 openMap URL 格式，確保地圖能正確開啟
 function openMap(lat,lng,name){
     // 使用景點名稱進行搜索，更準確
     const query = name.includes("站") || name.includes("機場") || name.includes("神社") || name.includes("寺") ? name : name + " 北九州";
