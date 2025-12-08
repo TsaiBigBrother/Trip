@@ -7,65 +7,60 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>2025 北九州 獨旅</title>
     <style>
-        :root {--primary:#D35400;--accent:#E67E22;--bg:#F5F6FA;--card:#FFFFFF;--text:#2D3436;--sub:#636E72;--sunq:#16A34A;--jr:#DC2626;--dazaifu:#7C3AED;}
-        @media (prefers-color-scheme: dark) {:root{--bg:#1a1a1a;--card:#2d2d2d;--text:#ecf0f1;--sub:#bdc3c7;}}
+        :root{--primary:#D35400;--accent:#E67E22;--bg:#F5F6FA;--card:#FFFFFF;--text:#2D3436;--sub:#636E72;--sunq:#16A34A;--jr:#DC2626;--dazaifu:#7C3AED;}
+        @media (prefers-color-scheme: dark){:root{--bg:#1a1a1a;--card:#2d2d2d;--text:#ecf0f1;--sub:#bdc3c7;}}
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);padding-bottom:80px;}
+        body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);padding-bottom:80px;line-height:1.5;}
 
-        /* 預設（電腦）：一整排 */
         .pass-bar{
             position:fixed;top:0;left:0;right:0;
             background:rgba(0,0,0,0.93);backdrop-filter:blur(15px);
             color:white;font-size:13px;font-weight:600;z-index:9999;
             padding:8px 15px;
             padding-top:max(env(safe-area-inset-top),20px);
-            padding-bottom:8px;
             display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;
         }
-
-        /* 手機（小於520px）：強制最美兩行 */
         @media (max-width:520px){
-            .pass-bar{
-                font-size:12.5px;padding:6px 10px;
+            .pass-bar{font-size:12.5px;padding:6px 10px;
                 padding-top:max(env(safe-area-inset-top),12px);
-                display:grid;grid-template-columns:repeat(3,1fr);
-                gap:6px 8px;justify-items:center;
-                max-height:calc(env(safe-area-inset-top)+88px);overflow:hidden;
+                display:grid;grid-template-columns:repeat(3,1fr);gap:6px 8px;justify-items:center;
             }
-            .pass-bar span:last-child{
-                grid-column:1/-1;background:#FFD700;color:#000;font-weight:700;padding:6px 0;
-            }
+            .pass-bar span:last-child{grid-column:1/-1;background:#FFD700;color:#000;font-weight:700;padding:6px 0;}
         }
-
-        .pass-tag{padding:5px 11px;border-radius:20px;white-space:nowrap;transition:0.25s;cursor:pointer;}
+        .pass-tag{padding:5px 11px;border-radius:20px;white-space:nowrap;transition:.25s;cursor:pointer;}
         .pass-tag:hover{transform:scale(1.05);}
         .pass-tag.sunq{background:var(--sunq);}
         .pass-tag.jr{background:var(--jr);}
         .pass-tag.dazaifu{background:var(--dazaifu);}
+        .pass-tag.vjw{background:#2E86C1;color:white;}
         .pass-tag.emergency{background:#e74c3c;}
 
-        /* header 高度自動適應 */
         header{
             background:linear-gradient(135deg,var(--primary),var(--accent));
-            color:white;padding:24px 20px 28px;text-align:center;
+            color:white;padding:24px 20px;text-align:center;
             margin-top:calc(env(safe-area-inset-top) + 68px);
         }
-        @media (max-width:520px){
-            header{margin-top:calc(env(safe-area-inset-top) + 92px);}
-        }
+        @media (max-width:520px){header{margin-top:calc(env(safe-area-inset-top) + 92px);}}
         h1{font-size:25px;font-weight:800;margin:0;}
         .subtitle{font-size:15px;opacity:0.95;margin-top:6px;}
 
-        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;justify-content:center;align-items:center;}
+        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;justify-content:center;align-items:center;}
         .modal-content{background:var(--card);margin:20px;padding:24px;border-radius:16px;max-width:90%;max-height:85%;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.35);position:relative;text-align:center;}
         .close{position:absolute;top:8px;right:15px;font-size:32px;color:var(--sub);cursor:pointer;}
+        #vjw-modal img{max-width:100%;border-radius:12px;box-shadow:0 8px 25px rgba(0,0,0,0.4);}
 
         .container{max-width:600px;margin:0 auto;padding:0 15px;}
         .day-group{margin:20px 0;}
-        .day-header{background:var(--card);padding:16px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 10px rgba(0,0,0,0.09);cursor:pointer;border-left:6px solid var(--primary);}
+        .day-header{
+            background:var(--card);padding:16px;border-radius:14px;
+            display:flex;justify-content:space-between;align-items:center;
+            box-shadow:0 3px 10px rgba(0,0,0,0.09);cursor:pointer;
+            border-left:6px solid var(--primary);user-select:none;
+        }
         .day-title{font-weight:bold;font-size:16.5px;}
-        .toggle{font-size:21px;transition:0.3s;}
+        .toggle{font-size:24px;transition:transform .3s;font-weight:bold;}
         .active .toggle{transform:rotate(180deg);}
+
         .spots{display:none;padding-left:14px;border-left:2px solid #ddd;margin-left:15px;margin-top:12px;}
         .active .spots{display:block;}
         .spot{background:var(--card);margin:14px 0 14px 16px;padding:15px;border-radius:14px;position:relative;box-shadow:0 3px 8px rgba(0,0,0,0.07);}
@@ -77,17 +72,16 @@
         .title{font-size:16.5px;font-weight:600;display:flex;align-items:center;justify-content:space-between;}
         .check{width:21px;height:21px;border:2.5px solid #ccc;border-radius:50%;margin-right:11px;cursor:pointer;flex-shrink:0;}
         .done .check{background:var(--primary);border-color:var(--primary);position:relative;}
-        .done .check::after{content:'✓';color:white;font-size:13px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);}
+        .done .check::after{content:'Checkmark';color:white;font-size:13px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);}
         .done .title{text-decoration:line-through;opacity:0.6;}
         .content{font-size:14px;color:var(--sub);line-height:1.6;margin:7px 0;}
-        .content b{cursor:pointer;color:#e74c3c;text-decoration:underline;}
+        .content a{color:#3498db;text-decoration:underline;}
         .tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px;font-size:11.5px;}
         .tag{padding:4px 9px;border-radius:5px;}
         .tag.pass{background:#e8f5e9;color:#1a7431;}
         .tag.save{background:#f0f8ff;color:#0066cc;font-weight:700;}
         .map{background:#3498db;color:white;padding:5px 9px;border-radius:5px;font-size:10.5px;cursor:pointer;}
-        .fab{position:fixed;bottom:max(22px,env(safe-area-inset-bottom));right:22px;background:var(--primary);color:white;width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 5px 18px rgba(0,0,0,0.35);z-index:999;}
-        #flight-modal img{max-width:100%;height:auto;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+        .fab{position:fixed;bottom:max(22px,env(safe-area-inset-bottom));right:22px;background:var(--primary);color:white;width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 5px 18px rgba(0,0,0,0.35);z-index:999;cursor:pointer;}
     </style>
 </head>
 <body>
@@ -96,43 +90,59 @@
     <span class="pass-tag sunq" data-modal="sunq">SUNQ Pass D1-D2</span>
     <span class="pass-tag jr" data-modal="jr">JR北九州 3日券</span>
     <span class="pass-tag dazaifu" data-modal="dazaifu">太宰府一日券</span>
+    <span class="pass-tag vjw" onclick="document.getElementById('vjw-modal').style.display='flex'">入境 QR Code</span>
     <span class="pass-tag emergency" data-modal="emergency">緊急聯絡</span>
 </div>
 
+<!-- 入境 QR Code -->
+<div id="vjw-modal" class="modal" onclick="if(event.target===this)this.style.display='none'">
+    <div class="modal-content">
+        <span class="close" onclick="document.getElementById('vjw-modal').style.display='none'">X</span>
+        <h2 style="margin-bottom:15px;color:#2E86C1;">日本入境 QR Code</h2>
+        <p style="margin-bottom:20px;color:#e74c3c;font-weight:600;">抵達大分機場後直接給移民官掃描</p>
+        <img src="images/vjw_digital_qrcode.png" 
+             onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/NoxianVBD/Trip/main/images/vjw_digital_qrcode.png'"
+             alt="入境 QR Code">
+        <p style="margin-top:20px;font-size:13px;color:var(--sub);">有效日期：2025-12-10</p>
+    </div>
+</div>
+
+<!-- 航班 -->
 <div id="flight-modal" class="modal" onclick="if(event.target===this)this.style.display='none'">
     <div class="modal-content">
-        <span class="close" onclick="document.getElementById('flight-modal').style.display='none'">×</span>
+        <span class="close" onclick="document.getElementById('flight-modal').style.display='none'">X</span>
         <h2 style="margin:15px 0;">班機資訊詳情</h2>
         <img src="images/flight-schedule.jpg" 
              onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/NoxianVBD/Trip/main/images/flight-schedule.jpg'"
-             alt="班機資訊" loading="eager">
+             alt="班機資訊">
         <p style="margin-top:15px;color:#e74c3c;font-size:14.5px;">
           去程 IT750　12:00 TPE → 15:00 OIT　　回程 IT241　10:55 FUK → 12:40 TPE　座位 8A
         </p>
     </div>
 </div>
 
+<!-- 通票與緊急聯絡 -->
 <div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">×</span>
+        <span class="close" onclick="closeModal()">X</span>
         <div id="modal-body"></div>
     </div>
 </div>
 
 <header>
-    <h1>2025 北九州 別府、博多、由布院、下關</h1>
+    <h1>2025 北九州 獨旅</h1>
     <div class="subtitle">12/10 大分機場 IT750 → 12/16 福岡機場 IT241</div>
 </header>
 
 <div class="container" id="timeline"></div>
-<div class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+<div class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})">Up Arrow</div>
 
 <script>
 const passInfo = {
     sunq:{title:"SUNQ Pass Northern Kyushu 2日券",info:"¥8,000，涵蓋北部九州所有高速/普通巴士",benefits:"D1機場→別府、D2由布院來回全包",save:"省 ¥3,600"},
-    jr:{title:"JR Northern Kyushu Rail Pass 3日券",info:"¥12,000（2025年最新價），涵蓋北部九州所有JR線（含Sonic特急）",benefits:"D3別府→博多、D4門司港來回全包",save:"仍省 ¥8,000+"},
+    jr:{title:"JR Northern Kyushu Rail Pass 3日券",info:"¥12,000，涵蓋北部九州所有JR線（含Sonic特急）",benefits:"D3別府→博多、D4門司港來回全包",save:"省 ¥8,000+"},
     dazaifu:{title:"太宰府一日券",info:"¥820，西鐵來回+太宰府市內巴士無限次",benefits:"光明禪寺、竈門神社交通全包",save:"省 ¥1,400+"},
-    emergency:{title:"日本緊急電話",info:"警察：110<br>消防/救護：119<br>台灣駐福岡辦事處：+81-92-734-2810<br>中華航空失物招領：+81-92-477-0231<br>信用卡掛失（台灣）：<br>國泰世華：+886-2-8073-1515<br>台新：+886-2-2655-3355<br>富邦：+886-2-8751-5151"}
+    emergency:{title:"日本緊急電話",info:"警察：110<br>消防/救護：119<br>台灣駐福岡辦事處：+81-92-734-2810<br>信用卡掛失（台灣）：<br>國泰世華：+886-2-8073-1515<br>台新：+886-2-2655-3355<br>富邦：+886-2-8751-5151"}
 };
 
 function openModal(e){
@@ -144,89 +154,75 @@ function openModal(e){
 function closeModal(){document.getElementById('modal').style.display='none';}
 
 function openMap(lat,lng,name){
-    location.href = `https://maps.apple.com/?ll=${lat},${lng}&q=${encodeURIComponent(name)}`;
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    location.href = isIOS 
+        ? `https://maps.apple.com/?ll=${lat},${lng}&q=${encodeURIComponent(name)}`
+        : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 }
 
-const trip={start:new Date('2025-12-10'),days:[
+const trip={days:[
     {d:"D1",date:"12/10（三）",title:"大分機場 → 別府入住",spots:[
-        {t:"15:00",title:"抵達大分機場 OIT (IT750)",c:"通關＋行李約45分<br><b onclick=\"document.getElementById('flight-modal').style.display='flex'\">點這裡查看完整班機資訊（行李／座位／金額）</b>",lat:33.4806,lng:131.7355},
+        {t:"15:00",title:"抵達大分機場 OIT (IT750)",c:"通關＋行李約45分<br><b onclick=\"document.getElementById('flight-modal').style.display='flex'\">點這裡查看完整班機資訊</b>",lat:33.4806,lng:131.7355},
         {t:"15:50",title:"機場巴士 → 別府站",c:"50分直達",cost:1600,pass:"SUNQ (啟用此日)",save:1600,lat:33.2789,lng:131.4998,type:"sunq"},
         {t:"16:40",title:"入住 亀の井ホテル別府",c:"站走6分，休息整理",stay:true,lat:33.27892,lng:131.49985},
-        {t:"17:30",title:"晚餐：お食事処 とよ常 別府駅前店",c:"人氣必吃「特上天丼」。週二本店公休，建議前往<b>別府駅前店</b>（別府站步行3分）。",lat:33.2789,lng:131.5008}
+        {t:"17:30",title:"晚餐：とよ常 別府駅前店",c:"人氣特上天丼",lat:33.2789,lng:131.5008}
     ]},
-    {d:"D2",date:"12/11（四）",title:"由布院金鱗湖冬霧全日（纜車保留D3）",spots:[
-        {t:"07:30",title:"飯店出發 → 別府站西口",c:"步行6分，建議07:35前抵達站牌",lat:33.2789,lng:131.4998},
-        {t:"08:20",title:"36番巴士 → 由布院駅前バスセンター",c:"50分車程，SUNQ Pass 全涵蓋（省 ¥1,000）<br>★ 08:20 為冬霧黃金班次，09:10 抵達<br><br><b>來回前四班時刻表（12/11 平日・36番・SUNQ涵蓋）</b><br><table style='width:100%;border-collapse:collapse;font-size:13px;'><tr style='background:#f0f0f0;'><th>去程（西口→由布院）</th><th>抵達時間</th><th>備註</th></tr><tr><td>07:30</td><td>08:20</td><td>最濃霧（90%機率），需06:45到站</td></tr><tr><td>08:20</td><td>09:10</td><td>★黃金霧散期，推薦！</td></tr><tr><td>09:40</td><td>10:30</td><td>霧薄，適合晚起</td></tr><tr><td>10:20</td><td>11:10</td><td>霧散，普通景觀</td></tr><tr style='background:#f0f0f0;'><th>回程（由布院→西口）</th><th>抵達時間</th><th>備註</th></tr><tr><td>15:30</td><td>16:20</td><td>早回休息</td></tr><tr><td>16:30</td><td>17:20</td><td>★推薦，天黑前到</td></tr><tr><td>17:00</td><td>17:50</td><td>最後亮天班</td></tr></table><small style='color:#777;'>※ 冬季±5分，NAVITIME確認</small>",cost:1000,pass:"SUNQ",save:1000,lat:33.262,lng:131.359,type:"sunq"},
-        {t:"09:20-10:30",title:"金鱗湖 冬霧最美時段",c:"由布院站步行5分直達湖東側木棧道<br>12月中旬濃霧機率 80%+，由布岳若隱若現超夢幻<br>建議穿足保暖衣、手套、熱飲",lat:33.2605,lng:131.36},
-        {t:"10:30-12:30",title:"湯之坪街道散策 + 午餐",c:"B-speak 瑞士捲（建議10:30前到避免排隊）<br>冬季限定熱紅酒、溫泉蒸栗子、雜貨店伴手禮",lat:33.263,lng:131.361},
-        {t:"13:00-15:00",title:"Floral Village 花兒村莊",c:"龍貓、史努比、愛麗絲主題園區，冬季雪景＋聖誕燈飾超好拍",lat:33.265,lng:131.365},
-        {t:"15:00-16:20",title:"自由時間（可選）",c:"・由布院足湯（免費）<br>・湯之坪街道再逛一次<br>・咖啡廳坐坐發呆"},
-        {t:"16:30",title:"36番巴士 返回別府站西口",c:"50分車程，SUNQ Pass 全涵蓋（省 ¥1,000）<br>17:20 抵達別府站",cost:1000,pass:"SUNQ",save:1000,lat:33.2789,lng:131.4998,type:"sunq"},
-        {t:"18:00",title:"晚餐建議",c:"別府站前「とよ常 天丼」或鐵輪溫泉街地獄蒸料理"}
+    {d:"D2",date:"12/11（四）",title:"由布院金鱗湖冬霧全日",spots:[
+        {t:"07:30",title:"飯店 → 別府站西口",c:"步行6分",lat:33.2789,lng:131.4998},
+        {t:"08:20",title:"36番巴士 → 由布院",c:"50分，SUNQ全涵蓋（省¥1,000）",cost:1000,pass:"SUNQ",save:1000,lat:33.262,lng:131.359,type:"sunq"},
+        {t:"09:20-10:30",title:"金鱗湖 冬霧最美時段",c:"由布院站步行5分<br>12月中旬濃霧機率80%+",lat:33.2605,lng:131.36},
+        {t:"10:30-12:30",title:"湯之坪街道散策 + 午餐",c:"B-speak瑞士捲、熱紅酒、蒸栗子",lat:33.263,lng:131.361},
+        {t:"13:00-15:00",title:"Floral Village 花兒村莊",c:"龍貓、史努比、愛麗絲主題",lat:33.265,lng:131.365},
+        {t:"15:00-16:20",title:"自由時間",c:"由布院足湯、咖啡廳"},
+        {t:"16:30",title:"36番巴士 返回別府",c:"50分，SUNQ全涵蓋（省¥1,000）",cost:1000,pass:"SUNQ",save:1000,lat:33.2789,lng:131.4998,type:"sunq"}
     ]},
     {d:"D3",date:"12/12（五）",title:"別府纜車＋地獄精華 → 博多",spots:[
-        {t:"08:00",title:"飯店 → 別府站西口",c:"步行6分"},
-        {t:"08:20",title:"巴士 → 別府纜車 (非 SUNQ)",c:"搭41/50/51/52號巴士約 25 分鐘，<b>此段不含在 SUNQ Pass 內</b> (約 ¥480)。",lat:33.3134,lng:131.4284,type:""},
-        {t:"08:50",title:"別府纜車 (鶴見岳)",c:"來回約 2 小時，門票 ¥1,800。山頂眺望別府市區與瀨戶內海。",lat:33.3134,lng:131.4284},
-        {t:"11:00",title:"纜車 → 鐵輪地獄區",c:"搭巴士約 15 分鐘，此段可使用 SUNQ Pass。",lat:33.3167,lng:131.4833,type:"sunq"},
-        {t:"11:30",title:"地獄巡迴 (精華版 3個)",c:"建議參觀：海地獄、鬼石坊主地獄、灶地獄。<b>不需通票，單獨購票 $3 \times ¥450 = ¥1,350</b>",lat:33.3167,lng:131.4833},
-        {t:"12:30",title:"鐵輪區午餐",c:"在地獄區快速用餐 (例如：鐵輪蒸點心或簡餐)。"},
-        {t:"13:10",title:"巴士 → 別府站",c:"搭巴士約 20 分鐘，此段可使用 SUNQ Pass。",lat:33.2789,lng:131.4998,type:"sunq"},
-        {t:"13:50",title:"Sonic特急 → 博多站",c:"2小時，自由席。請在別府站東口搭乘。",cost:10940,pass:"JR (啟用此日)",save:10940,lat:33.5902,lng:130.4205,type:"jr"},
-        {t:"16:00",title:"入住 華盛頓R&B 博多駅前第2",c:"博多口走4分",stay:true,lat:33.59015,lng:130.42128},
-        {t:"17:30",title:"博多站地下街",c:"藥妝＋晚餐"}
+        {t:"08:20",title:"巴士 → 別府纜車",c:"41/50/51/52號，約25分，¥480（非SUNQ）",lat:33.3134,lng:131.4284},
+        {t:"08:50",title:"別府纜車 (鶴見岳)",c:"來回¥1,800",lat:33.3134,lng:131.4284},
+        {t:"11:00",title:"纜車 → 鐵輪地獄區",c:"15分直達海地獄門口",lat:33.31681,lng:131.48324,type:"sunq"},
+        {t:"11:30",title:"地獄巡迴精華3個",c:"海地獄、鬼石坊主、灶地獄（單買¥1,350）",lat:33.3167,lng:131.4833},
+        {t:"13:50",title:"Sonic特急 → 博多",c:"2小時，自由席",cost:10940,pass:"JR (啟用此日)",save:10940,lat:33.5902,lng:130.4205,type:"jr"},
+        {t:"16:00",title:"入住 華盛頓R&B 博多駅前第2",c:"博多口步行4分",stay:true,lat:33.59015,lng:130.42128}
     ]},
-    {d:"D4",date:"12/13（六）",title:"早小倉城晨光 → 下關壽司＋春帆樓 → 走隧道到門司港看16:00橋秀",spots:[
-    {t:"08:00",title:"博多站 → 小倉站 → 小倉城",c:"JR快速／Sonic，52-68分，JR券免費<br>08:00班次最推薦 → 08:52抵小倉站 → 步行15-18分<br>09:07抵達，9:00開門第一波進去！",cost:2000,pass:"JR",save:2000,type:"jr",lat:33.8833,lng:130.8833},
-    {t:"09:10-11:50",title:"小倉城 天守閣＋庭園",c:"門票¥350，晨光超美<br>互動展、武士變裝拍照、展望台看小倉市景",lat:33.8833,lng:130.8833},
-    {t:"12:05",title:"小倉站 → 下關站",c:"JR鹿兒島本線／山陽本線普通車，12-15分，JR券免費<br>12:05班次 → 12:17抵達下關站（每10分鐘一班，隨到隨上）",cost:0,pass:"JR",save:0,type:"jr",lat:33.949,lng:130.923},
-    {t:"12:25-13:40",title:"下關唐戶市場 午餐壽司",c:"下關站步行12-15分直達市場<br>週六市集05:00-15:00最熱鬧時段<br>最道地握壽司＋河豚，推薦天寿し、磯部商店 ¥1,500-2,500",lat:33.9568,lng:130.9415},
-    {t:"13:45-14:20",title:"春帆樓＋日清講和紀念館",c:"市場步行5-7分，兩處都免費！<br>春帆樓外觀＋庭園、日清講和紀念館內部（李鴻章簽字桌）",lat:33.955,lng:130.938},
-    {t:"14:30-14:50",title:"下關側 → 關門隧道 → 門司港側",c:"市場走回隧道入口約10分＋海底780m步行15-20分<br>只走這一次！隧道內涼帶外套",lat:33.949,lng:130.95},
-    {t:"15:00-15:50",title:"門司港復古街散策",c:"隧道出口步行3分就到紅磚老街<br>舊大阪商船、香蕉人雕像、舊門司稅關",lat:33.9475,lng:130.9625},
-    {t:"16:00-16:20",title:"★藍翼橋 最後開合秀（16:00最終場）",c:"步行5分，60度升起＋音樂＋夕陽染關門海峽<br>整天最高潮！",lat:33.9475,lng:130.9625},
-    {t:"16:25-17:00",title:"門司港自由時間",c:"・舊門司三井俱樂部展望室 ¥300<br>・買燒咖哩、香蕉饅頭伴手禮",lat:33.9475,lng:130.9625},
-    {t:"17:10",title:"門司港站 → 博多站",c:"JR經小倉，約90分，JR券免費<br>17:10班次 → 18:00前回到博多",cost:2200,pass:"JR",save:2200,type:"jr"}
+    {d:"D4",date:"12/13（六）",title:"小倉城 → 下關 → 門司港藍翼橋",spots:[
+        {t:"08:00",title:"博多 → 小倉城",c:"JR 52-68分",cost:2000,pass:"JR",save:2000,type:"jr",lat:33.8833,lng:130.8833},
+        {t:"12:25",title:"唐戶市場壽司午餐",c:"週六最熱鬧！河豚握壽司必吃",lat:33.9568,lng:130.9415},
+        {t:"16:00",title:"藍翼橋開合秀（最終場）",c:"60度升起＋夕陽",lat:33.9475,lng:130.9625},
+        {t:"17:10",title:"門司港 → 博多",c:"約90分",cost:2200,pass:"JR",save:2200,type:"jr"}
     ]},
-    {d:"D5",date:"12/14（日）",title:"太宰府全日（竈門→稻荷→天滿宮 100%下坡版）",spots:[
-    {t:"09:00",title:"飯店 → 西鐵福岡（天神）站",c:"博多站步行4分 + 地鐵空港線7分（¥260）<br>09:00出發 → 09:20抵天神站<br><br><b>太宰府一日券購買提醒：</b><br>抵達西鐵福岡（天神）站後，直接去剪票口旁紅色自動售票機（有中文介面）<br>步驟：<br>1. 點選「太宰府ライナーバス・電車フリーきっぷ」<br>2. 選「大人」<br>3. 投入 ¥820（現金或刷 IC 卡）<br>4. 30 秒拿票直接出發！<br><br><img src='images/D5.Tenjin Ticket Machine.jpg' alt='西鐵天神站售票機實拍' style='max-width:100%;height:auto;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.15);margin:10px 0;'>",lat:33.5902,lng:130.4205},
-    {t:"09:25",title:"西鐵電車 → 太宰府站",c:"天神大牟田線＋太宰府線，約30-35分，一日券全免<br>09:25班次 → 09:40抵達（轉二日市站或直達）<br>太宰府一日券 ¥820（涵蓋來回電車＋市內巴士，省 ¥1,400+）",pass:"太宰府一日券 (啟用此日)",save:1400,lat:33.5215,lng:130.535,type:"dazaifu"},
-    {t:"09:50",title:"巴士直達竈門神社",c:"太宰府站前搭「まほろば號」1・2號線，10分，一日券免費<br>每20-30分一班，直接上山不走路",lat:33.519,lng:130.524},
-    {t:"10:00-11:20",title:"竈門神社 上宮",c:"緣結び神社＋愛之鎖＋鬼滅聖地<br>往後方小徑走12-15分（輕鬆下坡）→ 寶滿宮稻荷神社",lat:33.519,lng:130.524},
-    {t:"11:30-11:50",title:"寶滿宮稻荷神社（內宮）",c:"千本鳥居隧道＋小狐狸超可愛<br>御朱印 ¥500，拍照爆美",lat:33.515,lng:130.528},
-    {t:"11:50-12:20",title:"下坡步行 → 太宰府天滿宮本殿",c:"全程1.2km下坡＋平路，沿途梅林＋小溪<br>輕鬆抵達心字池",lat:33.5215,lng:130.535},
-    {t:"12:30-14:00",title:"太宰府天滿宮＋表參道午餐",c:"參拜御神牛＋心字池＋冬梅<br>表參道吃梅枝餅（現烤 ¥200）、鬼瓦そば、星巴克太宰府店",lat:33.5215,lng:130.535},
-    {t:"14:10-15:10",title:"光明禪寺（太宰本院）",c:"天滿宮旁步行5分平路<br>苔寺冬日庭園超夢幻（入場 ¥500）",lat:33.518,lng:130.532},
-    {t:"15:20-17:00",title:"自由時間（可選）",c:"・九州國立博物館 ¥700（步行8分）<br>・表參道再逛買梅枝餅伴手禮<br>・租和服拍照也很推薦"},
-    {t:"17:00",title:"返回博多",c:"西鐵電車直達30-35分，一日券免費<br>+地鐵7分（¥260） → 17:50抵飯店",pass:"太宰府一日券",type:"dazaifu"}
-]},
+    {d:"D5",date:"12/14（日）",title:"太宰府全日（100%下坡版）",spots:[
+        {t:"09:00",title:"博多 → 西鐵天神站",c:"地鐵7分→天神站買太宰府一日券¥820",lat:33.5902,lng:130.4205},
+        {t:"09:25",title:"西鐵 → 太宰府站",c:"30-35分，一日券全包",pass:"太宰府一日券 (啟用此日)",save:1400,lat:33.5215,lng:130.535,type:"dazaifu"},
+        {t:"09:50",title:"まほろば號巴士 → 竈門神社",c:"10分直達山上",lat:33.519,lng:130.524},
+        {t:"10:00-14:00",title:"竈門神社 → 寶滿宮稻荷 → 天滿宮",c:"全程輕鬆下坡",lat:33.5215,lng:130.535},
+        {t:"14:10",title:"光明禪寺",c:"冬日苔庭超夢幻 ¥500",lat:33.518,lng:130.532},
+        {t:"17:00",title:"返回博多",c:"西鐵直達＋地鐵",pass:"太宰府一日券",type:"dazaifu"}
+    ]},
     {d:"D6",date:"12/15（一）",title:"福岡最後採購",spots:[
-        {t:"10:00",title:"天神地下街＋運河城",c:"藥妝服飾伴手禮全掃"},
-        {t:"15:00",title:"中洲屋台拍照",c:"白天拍，晚上再吃"},
+        {t:"10:00",title:"天神地下街＋運河城",c:"藥妝、服飾、伴手禮全掃"},
         {t:"19:00",title:"一蘭總店或一幸舍",c:"最後一碗豚骨"}
     ]},
     {d:"D7",date:"12/16（二）",title:"返程日",spots:[
-        {t:"07:30",title:"退房 → 博多站西口"},
-        {t:"08:00",title:"巴士 → 福岡機場國際線",c:"15分 ¥280",lat:33.5843,lng:130.4465},
-        {t:"10:55",title:"IT241 起飛 (FUK → TPE)",c:"<b onclick=\"document.getElementById('flight-modal').style.display='flex'\">點這裡查看完整班機資訊（行李／座位／金額）</b><br>再見九州！",lat:33.5843,lng:130.4465}
+        {t:"08:00",title:"博多站 → 福岡機場",c:"機場巴士15分 ¥280",lat:33.5843,lng:130.4465},
+        {t:"10:55",title:"IT241 起飛 FUK → TPE",c:"<b onclick=\"document.getElementById('flight-modal').style.display='flex'\">點這裡查看班機詳情</b>",lat:33.5843,lng:130.4465}
     ]}
 ]};
 
 function render(){
     const container=document.getElementById('timeline');
     let html='';
-    trip.days.forEach((day,i)=>{
-        let spots='';
+    trip.days.forEach(day=>{
+        let spotsHTML='';
         day.spots.forEach(s=>{
             const type=s.stay?'stay':(s.type||'');
             let passTag='';
-            if(s.pass&&s.cost&&s.save){
-                passTag=`<span class="tag pass">${s.pass} 涵蓋 <s>¥${s.cost}</s> <span class="tag save">節省 ¥${s.save}</span></span>`;
+            if(s.pass && s.cost && s.save){
+                passTag=`<span class="tag pass">${s.pass} 涵蓋 <s>¥${s.cost}</s> <span class="tag save">省 ¥${s.save}</span></span>`;
             }else if(s.pass){
                 passTag=`<span class="tag pass">${s.pass} 涵蓋</span>`;
             }
             const mapBtn=s.lat?`<button class="map" onclick="event.stopPropagation();openMap(${s.lat},${s.lng},'${s.title}')">地圖</button>`:'';
-            spots+=`
+            spotsHTML+=`
                 <div class="spot ${type}" onclick="this.classList.toggle('done')">
                     <div class="time">${s.t}</div>
                     <div class="title"><div class="check"></div>${s.title}${mapBtn}</div>
@@ -241,7 +237,7 @@ function render(){
                     <div style="font-size:12px;color:var(--sub)">${day.date}</div></div>
                     <div class="toggle">▼</div>
                 </div>
-                <div class="spots">${spots}</div>
+                <div class="spots">${spotsHTML}</div>
             </div>`;
     });
     container.innerHTML=html;
