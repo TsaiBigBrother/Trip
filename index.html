@@ -12,17 +12,25 @@
         *{margin:0;padding:0;box-sizing:border-box;}
         body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);padding-bottom:80px;line-height:1.5;}
 
-        /* 上方票券列（你喜歡的整齊版） */
+        /* 上方票券列 */
         .pass-bar{
             position:fixed;top:0;left:0;right:0;
             background:rgba(0,0,0,0.93);backdrop-filter:blur(15px);
             color:white;z-index:9999;
             padding:10px 12px;
             padding-top:max(env(safe-area-inset-top),22px);
-            display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px;
+            display:flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            flex-wrap: nowrap; /* 強制單行 */
+            
+            /* 【修正 1】網頁版預設置中 */
+            justify-content: center; 
+            gap:10px;
         }
         .pass-tag{
-            flex:1;min-width:98px;max-width:145px;
+            flex-shrink: 0; 
+            min-width:98px;max-width:145px;
             padding:10px 6px;border-radius:18px;
             font-size:13px;font-weight:600;text-align:center;line-height:1.3;
             box-shadow:0 3px 10px rgba(0,0,0,0.4);
@@ -35,26 +43,23 @@
         .pass-tag.vjw{background:#2E86C1;}
         .pass-tag.emergency{background:#e74c3c;}
         
-        /* 調整小螢幕下的寬度分配 */
+        /* 手機版調整 */
         @media (max-width:520px){
-            .pass-bar{gap:8px;padding:8px 10px;padding-top:max(env(safe-area-inset-top),18px);}
-            .pass-tag{font-size:12.5px;padding:9px 4px;min-width:80px;} 
-            
-            /* 讓緊急聯絡 (emergency) 佔用最小寬度，以釋放空間 */
-            .pass-tag.emergency {
-                min-width: 70px; 
-                font-size: 12px;
-                padding: 9px 2px;
+            .pass-bar{
+                gap:8px;padding:8px 10px;padding-top:max(env(safe-area-inset-top),18px);
+                /* 【修正 2】手機版改為靠左，讓橫向卷軸從頭開始 */
+                justify-content: flex-start;
             }
+            .pass-tag{font-size:12.5px;padding:9px 4px;min-width:80px;}
+            
+            header{margin-top:calc(env(safe-area-inset-top) + 85px);}
         }
 
         header{
             background:linear-gradient(135deg,var(--primary),var(--accent));
             color:white;padding:24px 20px;text-align:center;
-            margin-top:calc(env(safe-area-inset-top) + 78px);
+            margin-top:calc(env(safe-area-inset-top) + 85px);
         }
-        /* 【修正重點】增加 margin-top 數值，避免被固定頂欄蓋住 */
-        @media (max-width:520px){header{margin-top:calc(env(safe-area-inset-top) + 90px);}} 
 
         /* 回到頂部（你喜歡的 SVG 版） */
         .fab{
