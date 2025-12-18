@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>2025 北九州 獨旅</title>
+    <title>2025 北九州 獨旅（更新版）</title>
     <style>
         :root{--primary:#D35400;--accent:#E67E22;--bg:#F5F6FA;--card:#FFFFFF;--text:#2D3436;--sub:#636E72;--sunq:#16A34A;--jr:#DC2626;--dazaifu:#7C3AED;}
         @media (prefers-color-scheme: dark){:root{--bg:#1a1a1a;--card:#2d2d2d;--text:#ecf0f1;--sub:#bdc3c7;}}
@@ -164,7 +164,7 @@
 </div>
 
 <header>
-    <h1>2025 北九州 獨旅</h1>
+    <h1>2025 北九州 獨旅（更新版）</h1>
     <div class="subtitle">12/10 大分機場 IT750 → 12/16 福岡機場 IT241</div>
 </header>
 
@@ -173,7 +173,7 @@
 <script>
 const passInfo = { 
     sunq:{title:"SUNQ Pass 北部九州 2日券",info:"¥8,000，涵蓋北部九州所有高速/普通巴士",benefits:"D1機場→別府、D2由布院來回全包",save:"省 ¥3,600"},
-    jr:{title:"JR 北九州 Rail Pass 3日券",info:"¥12,000，涵蓋北部九州所有JR線（含 Sonic 特急）",benefits:"D3別府→博多、D4門司港來回全包",save:"省 ¥8,000+"},
+    jr:{title:"JR 北九州 Rail Pass 3日券",info:"¥12,000，涵蓋北部九州所有JR線（含 Sonic 特急）",benefits:"D3中津+宇佐+博多、D4門司港來回全包",save:"省 ¥10,000+"},
     dazaifu:{title:"太宰府一日券",info:"¥820，西鐵來回+太宰府市內巴士無限次",benefits:"光明禪寺、竈門神社交通全包",save:"省 ¥1,400+"},
     emergency:{title:"日本緊急電話",info:"警察：110<br>消防/救護：119<br>台灣駐福岡辦事處：+81-92-734-2810<br>信用卡掛失（台灣）：<br>國泰世華：+886-2-8073-1515<br>台新：+886-2-2655-3355<br>富邦：+886-2-8751-5151"}
 };
@@ -251,19 +251,15 @@ function closeModal(){
 
 // 【最終修正】統一使用地點名稱和經緯度進行 Google 地圖查詢
 function openMap(lat,lng,name){
-    // 1. 確保查詢名稱是繁體中文
     let queryName = name;
     
-    // 2. 判斷是否需要加上「北九州」作為地理提示
     if (!queryName.includes("站") && !queryName.includes("機場") && !queryName.includes("神社") && !queryName.includes("寺") && !queryName.includes("市") && !queryName.includes("市場") && !queryName.includes("橋")) {
         queryName = queryName + " 北九州";
     }
     
-    // 3. 組合 Google Maps 查詢 URL (q=地點名稱 & ll=經緯度)
     const encodedQuery = encodeURIComponent(queryName);
     
-    // 使用 Google Maps 網頁連結，將地點名稱和經緯度都帶入
-    const url = `https://maps.google.com/?q=...${encodedQuery}&ll=${lat},${lng}`;
+    const url = `https://maps.google.com/?q=${encodedQuery}&ll=${lat},${lng}`;
     
     location.href = url;
 }
@@ -274,31 +270,29 @@ window.addEventListener('scroll', () => {
     fab.classList.toggle('show', window.scrollY > 300);
 });
 
-/* 完整行程資料（已修正住宿點經緯度） */
+/* 更新行程資料 */
 const trip={days:[ 
     {d:"D1",date:"12/10（三）",title:"大分機場 → 別府入住",spots:[
         {t:"15:00",title:"抵達大分機場 OIT (IT750)",c:"通關＋行李約45分<br><b onclick=\"closeAllModals();document.getElementById('flight-modal').style.display='flex'\">點這裡查看完整班機資訊</b>",lat:33.4806,lng:131.7355},
         {t:"15:50",title:"機場巴士 → 別府站",c:"50分直達",cost:1600,pass:"SUNQ (啟用此日)",save:1600,lat:33.2789,lng:131.4998,type:"sunq"},
-        // 經緯度已修正
         {t:"16:40",title:"入住 亀の井ホテル別府",c:"站走6分，休息整理",stay:true,lat:33.2804,lng:131.5034},
         {t:"17:30",title:"晚餐：とよ常 別府駅前店",c:"人氣特上天丼",lat:33.2798,lng:131.5032}
     ]},
-    {d:"D2",date:"12/11（四）",title:"由布院金鱗湖冬霧全日",spots:[
+    {d:"D2",date:"12/11（四）",title:"由布院金鱗湖 + 由布岳登山（中野岳）",spots:[
         {t:"07:30",title:"飯店 → 別府站西口",c:"步行6分",lat:33.2789,lng:131.4998},
         {t:"08:20",title:"36番巴士 → 由布院",c:"50分，SUNQ全涵蓋（省¥1,000）",cost:1000,pass:"SUNQ",save:1000,lat:33.2650,lng:131.3614,type:"sunq"},
         {t:"09:20-10:30",title:"金鱗湖 冬霧最美時段",c:"由布院站步行5分<br>12月中旬濃霧機率80%+",lat:33.2605,lng:131.36},
         {t:"10:30-12:30",title:"湯之坪街道散策 + 午餐",c:"B-speak瑞士捲、熱紅酒、蒸栗子",lat:33.263,lng:131.361},
-        {t:"13:00-15:00",title:"Floral Village 花兒村莊",c:"龍貓、史努比、愛麗絲主題",lat:33.2639,lng:131.3644},
-        {t:"15:00-16:20",title:"自由時間",c:"由布院足湯、咖啡廳"},
-        {t:"16:30",title:"36番巴士 返回別府",c:"50分，SUNQ全涵蓋（省¥1,000）",cost:1000,pass:"SUNQ",save:1000,lat:33.2789,lng:131.4998,type:"sunq"}
+        {t:"13:00-17:00",title:"由布岳登山（正面口 → 中野岳/マタエ往返）",c:"標準4-5小時，有鎖場注意安全<br>豐後富士美景+火山地形",lat:33.2925,lng:131.3889},
+        {t:"17:30",title:"巴士/計程車 返回別府",c:"從登山口附近，SUNQ涵蓋部分路線",pass:"SUNQ",lat:33.2789,lng:131.4998,type:"sunq"}
     ]},
-    {d:"D3",date:"12/12（五）",title:"別府纜車＋地獄精華 → 博多",spots:[
-        {t:"08:20",title:"巴士 → 別府纜車",c:"41/50/51/52號，約25分，¥480（非SUNQ）",lat:33.3134,lng:131.4284},
-        {t:"08:50",title:"別府纜車 (鶴見岳)",c:"來回¥1,800",lat:33.3134,lng:131.4284},
-        {t:"11:00",title:"纜車 → 鐵輪地獄區",c:"15分直達海地獄門口",lat:33.31681,lng:131.48324,type:"sunq"},
-        {t:"11:30",title:"地獄巡迴精華3個",c:"海地獄、鬼石坊主、灶地獄（單買¥1,350）",lat:33.3167,lng:131.4833},
-        {t:"13:50",title:"Sonic特急 → 博多",c:"2小時，自由席",cost:10940,pass:"JR (啟用此日)",save:10940,lat:33.5902,lng:130.4205,type:"jr"},
-        {t:"16:00",title:"入住 華盛頓R&B 博多駅前第2",c:"博多口步行4分",stay:true,lat:33.59015,lng:130.42128}
+    {d:"D3",date:"12/12（五）",title:"中津城（福澤諭吉歷史） + 宇佐神宮 → 博多",spots:[
+        {t:"09:00",title:"別府站 → 中津站",c:"JR Sonic/普通約45-60分",pass:"JR (啟用此日)",lat:33.6078,lng:131.1889,type:"jr"},
+        {t:"10:00-12:00",title:"中津城 + 福澤諭吉舊居/記念館",c:"步行可達，探索1萬日圓人物歷史<br>共通券推薦",lat:33.6064,lng:131.1897},
+        {t:"12:30",title:"中津站 → 宇佐站",c:"JR約15分",pass:"JR",lat:33.5314,lng:131.3500,type:"jr"},
+        {t:"13:00-15:00",title:"宇佐神宮",c:"八幡宮總本宮，國寶本殿<br>四拍手参拜",lat:33.5258,lng:131.3669},
+        {t:"15:30",title:"宇佐站 Sonic特急 → 博多",c:"約2小時，自由席",pass:"JR",lat:33.5902,lng:130.4205,type:"jr"},
+        {t:"17:30",title:"入住 華盛頓R&B 博多駅前第2",c:"博多口步行4分",stay:true,lat:33.59015,lng:130.42128}
     ]},
     {d:"D4",date:"12/13（六）",title:"小倉城 → 下關 → 門司港藍翼橋",spots:[
         {t:"08:00",title:"博多 → 小倉城",c:"JR 52-68分",cost:2000,pass:"JR",save:2000,type:"jr",lat:33.8824,lng:130.8789},
