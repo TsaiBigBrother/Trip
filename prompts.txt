@@ -1,0 +1,161 @@
+你是一位專門製作行動友善、單頁旅行行程網頁的資深前端工程師。
+請根據以下完整規格，生成一份**獨立、可直接執行的 HTML 檔案**（內含 CSS 與 JavaScript），不需要任何外部檔案引用（圖片使用 fallback 遠端連結）。
+
+頁面必須：
+- 支援深色模式（prefers-color-scheme: dark）
+- 手機優先設計（safe-area-inset-top/bottom、no zoom）
+- 包含固定頂部票券列（pass-bar）、浮動回到頂部按鈕（FAB）、漸層 header、手風琴式每日行程、點擊景點可打勾完成、Google Maps 連結、模態視窗（Modal）等功能
+
+### 必須完全符合的結構與功能
+
+【HTML 結構】
+- <!DOCTYPE html><html lang="zh-TW">
+- <head> 包含：
+  - meta charset="UTF-8"
+  - viewport: width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no
+  - apple-mobile-web-app-capable=yes / status-bar-style=black-translucent
+  - title：來自 tripData.title 
+- <body> 內容順序：
+  1. <div class="pass-bar"> … 票券標籤（從 tripData.passes 動態生成，如 <div class="pass-tag sunq" data-modal="sunq">SUNQ Pass<br>D1-D2</div>），並加入 vjw 和 emergency 的 pass-tag 如 <div class="pass-tag vjw" onclick="toggleVjwModal()">VJW QR</div> 和 <div class="pass-tag emergency" data-modal="emergency">緊急電話</div>
+  2. <div class="fab" id="backToTop"> … SVG 向上箭頭，如 <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  3. 各個 modal：
+     - id="vjw-modal"（入境 QR Code，如果 tripData 有 vjw 欄位）
+     - id="flight-modal"（班機資訊，如果 tripData 有 flight 欄位）
+     - id="modal"（通用 pass 說明 modal）
+  4. <header> 漸層背景，h1 + subtitle
+  5. <div class="container" id="timeline"></div>
+
+【CSS 變數與樣式（請完整複製並調整以匹配附件）】
+:root{--primary:#D35400;--accent:#E67E22;--bg:#F5F6FA;--card:#FFFFFF;--text:#2D3436;--sub:#636E72;--sunq:#16A34A;--jr:#DC2626;--dazaifu:#7C3AED;}
+@media (prefers-color-scheme: dark){:root{--bg:#1a1a1a;--card:#2d2d2d;--text:#ecf0f1;--sub:#bdc3c7;}}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);padding-bottom:80px;line-height:1.5;}
+
+/* 上方票券列 */
+.pass-bar{
+    position:fixed;top:0;left:0;right:0;
+    background:rgba(0,0,0,0.93);backdrop-filter:blur(15px);
+    color:white;z-index:9999;
+    padding:10px 12px;
+    padding-top:max(env(safe-area-inset-top),22px);
+    display:flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    justify-content: center; /* 網頁置中 */
+    gap:10px;
+}
+.pass-tag{
+    flex-shrink: 0; 
+    min-width:98px;max-width:145px;
+    padding:10px 6px;border-radius:18px;
+    font-size:13px;font-weight:600;text-align:center;line-height:1.3;
+    box-shadow:0 3px 10px rgba(0,0,0,0.4);
+    transition:all .25s;cursor:pointer;
+}
+.pass-tag:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.5);}
+.pass-tag.sunq{background:var(--sunq);}
+.pass-tag.jr{background:var(--jr);}
+.pass-tag.dazaifu{background:var(--dazaifu);}
+.pass-tag.vjw{background:#2E86C1;}
+.pass-tag.emergency{background:#e74c3c;}
+
+/* 手機版調整 */
+@media (max-width:520px){
+    .pass-bar{
+        gap:8px;padding:8px 10px;padding-top:max(env(safe-area-inset-top),18px);
+        justify-content: flex-start; /* 手機靠左，實現橫向卷軸 */
+    }
+    .pass-tag{font-size:12.5px;padding:9px 4px;min-width:80px;}
+    
+    header{margin-top:calc(env(safe-area-inset-top) + 85px);}
+}
+
+header{
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    color:white;padding:24px 20px;text-align:center;
+    margin-top:calc(env(safe-area-inset-top) + 85px);
+}
+
+/* 回到頂部（你喜歡的 SVG 版） */
+.fab{
+    position:fixed;bottom:max(22px,env(safe-area-inset-bottom));right:22px;
+    background:var(--primary);color:white;
+    width:58px;height:58px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 5px 18px rgba(0,0,0,0.35);z-index:998;cursor:pointer;
+    opacity:0;visibility:hidden;
+    transition:all .4s cubic-bezier(0.4,0,0.2,1);
+}
+.fab.show{opacity:1;visibility:visible;}
+.fab:hover{transform:translateY(-6px);box-shadow:0 12px 28px rgba(211,84,0,0.5);}
+.fab svg{stroke:white;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;width:34px;height:34px;}
+
+/* 原本樣式全部保留 */
+h1{font-size:25px;font-weight:800;margin:0;}
+.subtitle{font-size:15px;opacity:0.95;margin-top:6px;}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;justify-content:center;align-items:center;}
+.modal-content{background:var(--card);margin:20px;padding:24px;border-radius:16px;max-width:90%;max-height:85%;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.35);position:relative;text-align:center;}
+.close{position:absolute;top:8px;right:15px;font-size:32px;color:var(--sub);cursor:pointer;}
+
+/* 專門調整 VJW QR Code 圖片大小 */
+#vjw-modal img {
+    max-width: 250px; /* 設定合理的 QR Code 最大尺寸 */
+    width: 85%; /* 在小螢幕上仍能響應式縮小 */
+    height: auto;
+    margin: 15px auto; /* 加上上下邊距並置中 */
+    display: block;
+    border: 4px solid var(--card); /* 讓 QR Code 在深色背景下有邊界感 */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.container{max-width:600px;margin:0 auto;padding:0 15px;}
+.day-group{margin:20px 0;}
+.day-header{background:var(--card);padding:16px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 10px rgba(0,0,0,0.09);cursor:pointer;border-left:6px solid var(--primary);user-select:none;}
+.day-title{font-weight:bold;font-size:16.5px;}
+.toggle{font-size:24px;transition:transform .3s;font-weight:bold;}
+.active .toggle{transform:rotate(180deg);}
+.spots{display:none;padding-left:14px;border-left:2px solid #ddd;margin-left:15px;margin-top:12px;}
+.active .spots{display:block;}
+.spot{background:var(--card);margin:14px 0 14px 16px;padding:15px;border-radius:14px;position:relative;box-shadow:0 3px 8px rgba(0,0,0,0.07);}
+.spot::before{content:'';position:absolute;left:-22px;top:20px;width:11px;height:11px;border-radius:50%;background:var(--sub);border:2.5px solid var(--bg);}
+.spot.sunq::before{background:var(--sunq);}
+.spot.jr::before{background:var(--jr);}
+.spot.dazaifu::before{background:var(--dazaifu);}
+.time{background:#f0f0f0;color:var(--sub);padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;margin-bottom:7px;display:inline-block;}
+.title{font-size:16.5px;font-weight:600;display:flex;align-items:center;justify-content:space-between;}
+.check{width:21px;height:21px;border:2.5px solid #ccc;border-radius:50%;margin-right:11px;cursor:pointer;flex-shrink:0;}
+.done .check{background:var(--primary);border-color:var(--primary);position:relative;}
+.done .check::after{content:'✓';color:white;font-size:13px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);}
+.done .title{text-decoration:line-through;opacity:0.6;}
+.content{font-size:14px;color:var(--sub);line-height:1.6;margin:7px 0;}
+.content a{color:#3498db;text-decoration:underline;}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px;font-size:11.5px;}
+.tag{padding:4px 9px;border-radius:5px;}
+.tag.pass{background:#e8f5e9;color:#1a7431;}
+.tag.save{background:#f0f8ff;color:#0066cc;font-weight:700;}
+.map{background:#3498db;color:white;padding:5px 9px;border-radius:5px;font-size:10.5px;cursor:pointer;}
+
+【JavaScript 必須實現的功能】
+- const passInfo = tripData.passes;
+- closeAllModals()：關閉所有 modal 並收合所有 day-group
+- toggleVjwModal()：專門開關 vjw-modal
+- toggleDay(event)：允許多個 day 展開（非強制單一展開），切換當前 group 的 'active' 類別，並將 .toggle 文字從 '▼' 改為 '▲' 或反之
+- openModal(e)：點擊 pass-tag（透過 data-modal）開啟通用 modal 顯示 pass 資訊，包含 title、info、benefits/save
+- openMap(lat, lng, name)：產生 Google Maps 連結，使用 https://maps.google.com/?q=${encodedQuery}&ll=${lat},${lng}，name 若無「站/機場/神社/寺/市/市場/橋」則自動補「 北九州」
+- 滾動 >300px 顯示 FAB
+- render() 函式：根據 tripData.days 動態產生所有 day-group 與 spot HTML
+  - spot 若有 pass/cost/save → 產生對應 tag 如 <span class="tag pass">${s.pass} 涵蓋 <s>¥${s.cost}</s> <span class="tag save">省 ¥${s.save}</span></span>
+  - spot 若有 pass 但無 cost/save → 產生 <span class="tag pass">${s.pass} 涵蓋</span>
+  - spot 若有 lat/lng → 產生「地圖」按鈕 <button class="map" onclick="event.stopPropagation();openMap(${s.lat},${s.lng},'${s.title}')">地圖</button>
+  - spot 可點擊打勾（class done + 勾勾 + 刪除線）
+  - spot class 加入 type 如 class="spot ${s.type}"
+  - day-header 結構：包含 <div class="day-title">${day.d} ${day.title}</div> 和 <div style="font-size:12px;color:var(--sub)">${day.date}</div>
+  - 最後呼叫 render()，並為 .pass-tag[data-modal] 綁定 click 事件到 openModal
+
+【請使用以下 tripData JSON 來生成頁面】
+
+[請在此貼上完整的 tripData JSON]
+
+請直接輸出完整 HTML 程式碼，從 <!DOCTYPE html> 開始，不要有任何額外說明文字。
