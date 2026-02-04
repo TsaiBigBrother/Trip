@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>2025 北九州 獨旅 - TsaiBigBrother 蔡大哥模板</title>
+    <style>
+        :root{--primary:#D35400;--accent:#E67E22;--bg:#F5F6FA;--card:#FFFFFF;--text:#2D3436;--sub:#636E72;--sunq:#16A34A;--jr:#DC2626;--dazaifu:#7C3AED;}
+        @media (prefers-color-scheme: dark){:root{--bg:#1a1a1a;--card:#2d2d2d;--text:#ecf0f1;--sub:#bdc3c7;}}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);padding-bottom:80px;line-height:1.5;}
+
+        /* 上方票券列 */
+        .pass-bar{
+            position:fixed;top:0;left:0;right:0;
+            background:rgba(0,0,0,0.93);backdrop-filter:blur(15px);
+            color:white;z-index:9999;
+            padding:10px 12px;
+            padding-top:max(env(safe-area-inset-top),22px);
+            display:flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            flex-wrap: nowrap;
+            justify-content: center; /* 網頁置中 */
+            gap:10px;
+        }
+        .pass-tag{
+            flex-shrink: 0; 
+            min-width:98px;max-width:145px;
+            padding:10px 6px;border-radius:18px;
+            font-size:13px;font-weight:600;text-align:center;line-height:1.3;
+            box-shadow:0 3px 10px rgba(0,0,0,0.4);
+            transition:all .25s;
+            cursor: pointer;
+        }
+        .pass-tag:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.5);}
+        .pass-tag.sunq{background:var(--sunq);}
+        .pass-tag.jr{background:var(--jr);}
+        .pass-tag.dazaifu{background:var(--dazaifu);}
+        .pass-tag.vjw{background:#2E86C1;}
+        .pass-tag.emergency{background:#e74c3c;}
+        
+        /* 手機版調整 */
+        @media (max-width:520px){
+            .pass-bar{
+                gap:8px;padding:8px 10px;padding-top:max(env(safe-area-inset-top),18px);
+                justify-content: flex-start; /* 手機靠左，實現橫向卷軸 */
+            }
+            .pass-tag{font-size:12.5px;padding:9px 4px;min-width:80px;}
+            header{margin-top:calc(env(safe-area-inset-top) + 85px);}
+        }
+
+        header{
+            background:linear-gradient(135deg,var(--primary),var(--accent));
+            color:white;padding:24px 20px;text-align:center;
+            margin-top:calc(env(safe-area-inset-top) + 85px);
+        }
+
+        /* 回到頂部 (FAB) */
+        .fab{
+            position:fixed;bottom:max(22px,env(safe-area-inset-bottom));right:22px;
+            background:var(--primary);color:white;
+            width:58px;height:58px;border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            box-shadow:0 5px 18px rgba(0,0,0,0.35);z-index:998;cursor:pointer;
+            opacity:0;visibility:hidden;
+            transition:all .4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .fab.show{opacity:1;visibility:visible;}
+        .fab svg{stroke:white;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;width:34px;height:34px;}
+
+        h1{font-size:25px;font-weight:800;margin:0;}
+        .subtitle{font-size:15px;opacity:0.95;margin-top:6px;}
+        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;justify-content:center;align-items:center;}
+        .modal-content{background:var(--card);margin:20px;padding:24px;border-radius:16px;max-width:90%;max-height:85%;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.35);position:relative;text-align:center;}
+        .close{position:absolute;top:8px;right:15px;font-size:32px;color:var(--sub);cursor:pointer;}
+        
+        #vjw-modal img {
+            max-width: 250px;
+            width: 85%;
+            height: auto;
+            margin: 15px auto;
+            display: block;
+            border: 4px solid var(--card);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .container{max-width:600px;margin:0 auto;padding:0 15px;}
+        .day-group{margin:20px 0;}
+        .day-header{background:var(--card);padding:16px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 10px rgba(0,0,0,0.09);cursor:pointer;border-left:6px solid var(--primary);user-select:none;}
+        .day-title{font-weight:bold;font-size:16.5px;}
+        .toggle{font-size:24px;transition:transform .3s;font-weight:bold;}
+        .active .toggle{transform:rotate(180deg);}
+        .spots{display:none;padding-left:14px;border-left:2px solid #ddd;margin-left:15px;margin-top:12px;}
+        .active .spots{display:block;}
+        .spot{background:var(--card);margin:14px 0 14px 16px;padding:15px;border-radius:14px;position:relative;box-shadow:0 3px 8px rgba(0,0,0,0.07);}
+        .spot::before{content:'';position:absolute;left:-22px;top:20px;width:11px;height:11px;border-radius:50%;background:var(--sub);border:2.5px solid var(--bg);}
+        .spot.sunq::before{background:var(--sunq);}
+        .spot.jr::before{background:var(--jr);}
+        .spot.dazaifu::before{background:var(--dazaifu);}
+        .time{background:#f0f0f0;color:var(--sub);padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;margin-bottom:7px;display:inline-block;}
+        .title{font-size:16.5px;font-weight:600;display:flex;align-items:center;justify-content:space-between;}
+        .check{width:21px;height:21px;border:2.5px solid #ccc;border-radius:50%;margin-right:11px;cursor:pointer;flex-shrink:0;}
+        .done .check{background:var(--primary);border-color:var(--primary);position:relative;}
+        .done .check::after{content:'✓';color:white;font-size:13px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);}
+        .done .title{text-decoration:line-through;opacity:0.6;}
+        .content{font-size:14px;color:var(--sub);line-height:1.6;margin:7px 0;}
+        .content a{color:#3498db;text-decoration:underline;}
+        .tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px;font-size:11.5px;}
+        .tag{padding:4px 9px;border-radius:5px;}
+        .tag.pass{background:#e8f5e9;color:#1a7431;}
+        .tag.save{background:#f0f8ff;color:#0066cc;font-weight:700;}
+        .map{background:#3498db;color:white;padding:5px 9px;border-radius:5px;font-size:10.5px;cursor:pointer;}
+
+        /* Footer 置中與品牌曝光優化 */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            font-size: 13px;
+            color: var(--sub);
+            background: var(--bg);
+            width: 100%;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            margin-top: 40px;
+        }
+        footer p {
+            margin: 8px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 4px;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="pass-bar">
+    <div class="pass-tag sunq" data-modal="sunq">SUNQ Pass<br>D1-D2</div>
+    <div class="pass-tag jr" data-modal="jr">JR北九州<br>3日券</div>
+    <div class="pass-tag dazaifu" data-modal="dazaifu">太宰府<br>一日券</div>
+    <div class="pass-tag vjw" onclick="toggleVjwModal()">入境<br>QR Code</div>
+    <div class="pass-tag emergency" data-modal="emergency">緊急<br>聯絡</div>
+</div>
+
+<div class="fab" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</div>
+
+<div id="vjw-modal" class="modal" onclick="if(event.target===this)toggleVjwModal()">
+    <div class="modal-content">
+        <span class="close" onclick="toggleVjwModal()">×</span>
+        <h2 style="margin-bottom:15px;color:#2E86C1;">日本入境 QR Code</h2>
+        <p style="margin-bottom:20px;color:#e74c3c;font-weight:600;">抵達大分機場後直接給移民官掃描</p>
+        <img src="images/vjw_digital_qrcode.png" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/NoxianVBD/Trip/main/images/vjw_digital_qrcode.png'" alt="入境 QR Code">
+        <p style="margin-top:20px;font-size:13px;color:var(--sub);">有效日期：2025-12-10</p>
+    </div>
+</div>
+
+<div id="flight-modal" class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">×</span>
+        <h2 style="margin:15px 0;">班機資訊詳情</h2>
+        <img src="images/flight-schedule.jpg" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/NoxianVBD/Trip/main/images/flight-schedule.jpg'" alt="班機資訊" style="max-width: 100%; height: auto;">
+        <p style="margin-top:15px;color:#e74c3c;font-size:14.5px;">
+          去程 IT750　12:00 TPE → 15:00 OIT　　回程 IT241　10:55 FUK → 12:40 TPE　座位 8A
+        </p>
+    </div>
+</div>
+
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">×</span>
+        <div id="modal-body"></div>
+    </div>
+</div>
+
+<header>
+    <h1>2025 北九州 獨旅</h1>
+    <div class="subtitle">12/10 大分機場 IT750 → 12/16 福岡機場 IT241</div>
+</header>
+
+<div class="container" id="timeline"></div>
+
+<footer>
+    <p>© 2026 Created by <a href="https://www.instagram.com/tsaibigbrother/" target="_blank">TsaiBigBrother 蔡大哥</a></p>
+    <p>參考來源：<a href="https://github.com/TsaiBigBrother/Trip" target="_blank">TsaiBigBrother/Trip GitHub</a></p>
+    <p>本行程由 AI 輔助規劃並採用 <b>蔡大哥旅遊模板</b> 製作</p>
+</footer>
+
+<script>
+const passInfo = { 
+    sunq:{title:"SUNQ Pass 北部九州 2日券",info:"¥8,000，涵蓋北部九州所有高速/普通巴士",benefits:"D1機場→別府、D2由布院來回全包",save:"省 ¥3,600"},
+    jr:{title:"JR 北九州 Rail Pass 3日券",info:"¥12,000，涵蓋北部九州所有JR線（含 Sonic 特急）",benefits:"D3中津+宇佐+博多、D4門司港來回全包",save:"省 ¥10,000+"},
+    dazaifu:{title:"太宰府一日券",info:"¥820，西鐵來回+太宰府市內巴士無限次",benefits:"光明禪寺、竈門神社交通全包",save:"省 ¥1,400+"},
+    emergency:{title:"日本緊急電話",info:"警察：110<br>消防/救護：119<br>台灣駐福岡辦事處：+81-92-734-2810<br>信用卡掛失（台灣）：<br>國泰世華：+886-2-8073-1515<br>台新：+886-2-2655-3355<br>富邦：+886-2-8751-5151"}
+};
+
+// 關閉所有 Modals 和 Day Groups 的中央控制器
+function closeAllModals() {
+    document.getElementById('modal').style.display = 'none';
+    document.getElementById('vjw-modal').style.display = 'none';
+    document.getElementById('flight-modal').style.display = 'none';
+}
+
+// QR Code 的開關/切換邏輯
+function toggleVjwModal() {
+    const vjwModal = document.getElementById('vjw-modal');
+    const isActive = vjwModal.style.display === 'flex';
+    closeAllModals();
+    if (!isActive) vjwModal.style.display = 'flex';
+}
+
+// 實現手風琴效果 (Accordion) 的邏輯
+function toggleDay(event) {
+    const clickedGroup = event.currentTarget.parentNode;
+    const isActive = clickedGroup.classList.contains('active');
+    closeAllModals(); 
+    document.querySelectorAll('.day-group').forEach(group => group.classList.remove('active'));
+    if (!isActive) clickedGroup.classList.add('active');
+}
+
+// 處理 Pass Modals 的開啟
+function openModal(e){
+    closeAllModals(); 
+    const t = e.target.closest('.pass-tag')?.dataset.modal;
+    if (!t) return;
+    const pass = passInfo[t];
+    const benefitOrSave = pass.benefits || pass.save;
+    let benefitsHtml = benefitOrSave ? `<p style="margin-top:15px;"><strong>好處/說明：</strong><br>${benefitOrSave}</p>` : '';
+    document.getElementById('modal-body').innerHTML = `
+        <h2 style="margin-bottom:10px;">${pass.title}</h2>
+        <p>${pass.info}</p>
+        ${benefitsHtml}
+    `;
+    document.getElementById('modal').style.display = 'flex';
+}
+function closeModal(){ closeAllModals(); }
+
+function openMap(lat,lng,name){
+    let queryName = name;
+    if (!/站|機場|神社|寺|市|市場|橋/.test(queryName)) queryName += " 北九州";
+    window.location.href = `http://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(queryName)}&ll=${lat},${lng}`;
+}
+
+const fab = document.getElementById('backToTop');
+window.addEventListener('scroll', () => { fab.classList.toggle('show', window.scrollY > 300); });
+
+const trip={days:[ 
+    {d:"D1",date:"12/10（三）",title:"大分機場 → 別府入住",spots:[
+        {t:"15:00",title:"抵達大分機場 OIT (IT750)",c:"通關＋行李約45分<br><b style='cursor:pointer' onclick=\"closeAllModals();document.getElementById('flight-modal').style.display='flex'\">點這裡查看完整班機資訊</b>",lat:33.4806,lng:131.7355},
+        {t:"15:50",title:"機場巴士 → 別府站",c:"50分直達",cost:1600,pass:"SUNQ (啟用此日)",save:1600,lat:33.2789,lng:131.4998,type:"sunq"},
+        {t:"16:40",title:"入住 亀の井ホテル別府",c:"站走6分，休息整理",stay:true,lat:33.2804,lng:131.5034},
+        {t:"17:30",title:"晚餐：とよ常 別府駅前店",c:"人氣特上天丼",lat:33.2798,lng:131.5032}
+    ]},
+    {d:"D2",date:"12/11（四）",title:"由布院金鱗湖 + 由布岳登山（中野岳）",spots:[
+        {t:"07:30",title:"飯店 → 別府站西口",c:"步行6分",lat:33.2789,lng:131.4998},
+        {t:"08:20",title:"36番巴士 → 由布院",c:"50分，SUNQ全涵蓋（省¥1,000）",cost:1000,pass:"SUNQ",save:1000,lat:33.2650,lng:131.3614,type:"sunq"},
+        {t:"09:20-10:30",title:"金鱗湖 冬霧最美時段",c:"由布院站步行5分<br>12月中旬濃霧機率80%+",lat:33.2605,lng:131.36},
+        {t:"10:30-12:30",title:"湯之坪街道散策 + 午餐",c:"B-speak瑞士捲、熱紅酒、蒸栗子",lat:33.263,lng:131.361},
+        {t:"13:00-17:00",title:"由布岳登山（正面口 → 中野岳/マタエ往返）",c:"標準4-5小時，有鎖場注意安全<br>豐後富士美景+火山地形",lat:33.2925,lng:131.3889},
+        {t:"17:30",title:"巴士/計程車 返回別府",c:"從登山口附近，SUNQ涵蓋部分路線",pass:"SUNQ",lat:33.2789,lng:131.4998,type:"sunq"}
+    ]},
+    {d:"D3",date:"12/12（五）",title:"中津城（福澤諭吉歷史） + 宇佐神宮 → 博多",spots:[
+        {t:"09:00",title:"別府站 → 中津站",c:"JR Sonic/普通約45-60分",pass:"JR (啟用此日)",lat:33.6078,lng:131.1889,type:"jr"},
+        {t:"10:00-12:00",title:"中津城 + 福澤諭吉舊居/記念館",c:"步行可達，探索1萬日圓人物歷史<br>共通券推薦",lat:33.6064,lng:131.1897},
+        {t:"12:30",title:"中津站 → 宇佐站",c:"JR約15分",pass:"JR",lat:33.5314,lng:131.3500,type:"jr"},
+        {t:"13:00-15:00",title:"宇佐神宮",c:"八幡宮總本宮，國寶本殿<br>四拍手参拜",lat:33.5258,lng:131.3669},
+        {t:"15:30",title:"宇佐站 Sonic特急 → 博多",c:"約2小時，自由席",pass:"JR",lat:33.5902,lng:130.4205,type:"jr"},
+        {t:"17:30",title:"入住 華盛頓R&B 博多駅前第2",c:"博多口步行4分",stay:true,lat:33.59015,lng:130.42128}
+    ]},
+    {d:"D4",date:"12/13（六）",title:"小倉城 → 下關 → 門司港藍翼橋",spots:[
+        {t:"08:00",title:"博多 → 小倉城",c:"JR 52-68分",cost:2000,pass:"JR",save:2000,type:"jr",lat:33.8824,lng:130.8789},
+        {t:"12:25",title:"唐戶市場壽司午餐",c:"週六最熱鬧！河豚握壽司必吃",lat:33.9568,lng:130.9415},
+        {t:"16:00",title:"藍翼橋開合秀（最終場）",c:"60度升起＋夕陽",lat:33.9475,lng:130.9625},
+        {t:"17:10",title:"門司港 → 博多",c:"約90分",cost:2200,pass:"JR",save:2200,type:"jr"}
+    ]},
+    {d:"D5",date:"12/14（日）",title:"太宰府全日（100%下坡版）",spots:[
+        {t:"09:00",title:"博多 → 西鐵天神站",c:"地鐵7分→天神站買太宰府一日券¥820",lat:33.5898,lng:130.3995},
+        {t:"09:25",title:"西鐵 → 太宰府站",c:"30-35分，一日券全包",pass:"太宰府一日券 (啟用此日)",save:1400,lat:33.5218,lng:130.5359,type:"dazaifu"},
+        {t:"09:50",title:"まほろば號巴士 → 竈門神社",c:"10分直達山上",lat:33.5193,lng:130.5239},
+        {t:"10:00-14:00",title:"竈門神社 → 寶滿宮稻荷 → 天滿宮",c:"全程輕鬆下坡",lat:33.5218,lng:130.5359},
+        {t:"14:10",title:"光明禪寺",c:"冬日苔庭超夢幻 ¥500",lat:33.5188,lng:130.5327},
+        {t:"17:00",title:"返回博多",c:"西鐵直達＋地鐵",pass:"太宰府一日券",type:"dazaifu"}
+    ]},
+    {d:"D6",date:"12/15（一）",title:"福岡最後採購",spots:[
+        {t:"10:00",title:"天神地下街＋運河城",c:"藥妝、服飾、伴手禮全掃"},
+        {t:"19:00",title:"一蘭總店或一幸舍",c:"最後一碗豚骨"}
+    ]},
+    {d:"D7",date:"12/16（二）",title:"返程日",spots:[
+        {t:"08:00",title:"博多站 → 福岡機場",c:"機場巴士15分 ¥280",lat:33.5843,lng:130.4465},
+        {t:"10:55",title:"IT241 起飛 FUK → TPE",c:"<b style='cursor:pointer' onclick=\"closeAllModals();document.getElementById('flight-modal').style.display='flex'\">點這裡查看班機詳情</b>",lat:33.5843,lng:130.4465}
+    ]}
+]};
+
+function render(){
+    const container=document.getElementById('timeline');
+    let html='';
+    trip.days.forEach(day=>{
+        let spotsHTML='';
+        day.spots.forEach(s=>{
+            const type=s.stay?'stay':(s.type||'');
+            let passTag = s.pass ? `<span class="tag pass">${s.pass} 涵蓋 ${s.cost ? `<s>¥${s.cost}</s> <span class="tag save">省 ¥${s.save}</span>` : ''}</span>` : '';
+            const mapBtn = s.lat ? `<button class="map" onclick="event.stopPropagation();openMap(${s.lat},${s.lng},'${s.title}')">地圖</button>` : '';
+            spotsHTML+=`
+                <div class="spot ${type}" onclick="this.classList.toggle('done')">
+                    <div class="time">${s.t}</div>
+                    <div class="title"><div class="check"></div>${s.title}${mapBtn}</div>
+                    <div class="content">${s.c}</div>
+                    <div class="tags">${passTag}</div>
+                </div>`;
+        });
+        html+=`<div class="day-group"><div class="day-header" onclick="toggleDay(event)"><div><div class="day-title">${day.d} ${day.title}</div><div style="font-size:12px;color:var(--sub)">${day.date}</div></div><div class="toggle">▼</div></div><div class="spots">${spotsHTML}</div></div>`;
+    });
+    container.innerHTML=html;
+    document.querySelectorAll('.pass-tag[data-modal]').forEach(el=>el.addEventListener('click',openModal));
+}
+render();
+</script>
+</body>
+</html>
