@@ -1,196 +1,206 @@
 <!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>2026 港澳 5日遊 - TsaiBigBrother</title>
+    <style>
+/* TsaiBigBrother Style Variables */
+:root{--primary:#D35400;--accent:#E67E22;--bg:#F5F6FA;--card:#FFFFFF;--text:#2D3436;--sub:#636E72;--sunq:#16A34A;--jr:#DC2626;--dazaifu:#7C3AED;--money:#27AE60;}
+@media (prefers-color-scheme: dark){:root{--bg:#1a1a1a;--card:#2d2d2d;--text:#ecf0f1;--sub:#bdc3c7;}}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);padding-bottom:80px;line-height:1.5;}
 
-<html lang="zh-TW"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <meta name="apple-mobile-web-app-capable" content="yes"> <title>2026 香港-澳門 摘星食旅 (天氣優化版)</title> <style> :root{--primary:#D35400;--accent:#E67E22;--bg:#F5F6FA;--card:#FFFFFF;--text:#2D3436;--sub:#636E72;--sunq:#16A34A;--jr:#DC2626;--dazaifu:#7C3AED;} @media (prefers-color-scheme: dark){:root{--bg:#1a1a1a;--card:#2d2d2d;--text:#ecf0f1;--sub:#bdc3c7;}} *{margin:0;padding:0;box-sizing:border-box;} body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);padding-bottom:80px;line-height:1.5;}
+/* 上方票券列 */
+.pass-bar{
+    position:fixed;top:0;left:0;right:0;
+    background:rgba(0,0,0,0.93);backdrop-filter:blur(15px);
+    color:white;z-index:9999;
+    padding:10px 12px;
+    padding-top:max(env(safe-area-inset-top),22px);
+    display:flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap:10px;
+}
+.pass-tag{
+    flex-shrink: 0; 
+    min-width:98px;max-width:145px;
+    padding:12px 10px;border-radius:18px;
+    font-size:13px;font-weight:700;text-align:center;line-height:1.3;
+    box-shadow:0 3px 10px rgba(0,0,0,0.4);
+    transition:all .25s;cursor:pointer;
+}
+.pass-tag:active{transform:translateY(2px);}
+.pass-tag.sunq{background:var(--sunq);}
+.pass-tag.jr{background:var(--jr);}
+.pass-tag.dazaifu{background:var(--dazaifu);}
+.pass-tag.money{background:var(--money);} /* 新增換匯按鈕顏色 */
+.pass-tag.vjw{background:#2E86C1;}
+.pass-tag.emergency{background:#e74c3c;}
 
-    /* 上方票券列 */
+/* 手機版調整 */
+@media (max-width:520px){
     .pass-bar{
-        position:fixed;top:0;left:0;right:0;
-        background:rgba(0,0,0,0.93);backdrop-filter:blur(15px);
-        color:white;z-index:9999;
-        padding:10px 12px;
-        padding-top:max(env(safe-area-inset-top),22px);
-        display:flex;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        flex-wrap: nowrap;
-        justify-content: center;
-        gap:10px;
+        gap:8px;padding:8px 10px;padding-top:max(env(safe-area-inset-top),18px);
+        justify-content: flex-start;
     }
-    .pass-tag{
-        flex-shrink: 0; 
-        min-width:98px;max-width:145px;
-        padding:12px 10px;border-radius:18px;
-        font-size:13px;font-weight:700;text-align:center;line-height:1.3;
-        box-shadow:0 3px 10px rgba(0,0,0,0.4);
-        transition:all .25s;cursor:pointer;
-    }
-    .pass-tag:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.5);}
-    .pass-tag.sunq{background:var(--sunq);}
-    .pass-tag.jr{background:var(--jr);}
-    .pass-tag.dazaifu{background:var(--dazaifu);}
-    .pass-tag.vjw{background:#2E86C1;}
-    .pass-tag.emergency{background:#e74c3c;}
-    .pass-tag.weather{background:#34495e;}
+    .pass-tag{font-size:12.5px;padding:10px 8px;min-width:80px;}
+    header{margin-top:calc(env(safe-area-inset-top) + 85px);}
+}
 
-    /* 手機版調整 */
-    @media (max-width:520px){
-        .pass-bar{
-            gap:8px;padding:8px 10px;padding-top:max(env(safe-area-inset-top),18px);
-            justify-content: flex-start;
-        }
-        .pass-tag{font-size:12.5px;padding:10px 8px;min-width:80px;}
-        header{margin-top:calc(env(safe-area-inset-top) + 85px);}
-    }
+header{
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    color:white;padding:24px 20px;text-align:center;
+    margin-top:calc(env(safe-area-inset-top) + 85px);
+}
+h1{font-size:25px;font-weight:800;margin:0;}
+.subtitle{font-size:15px;opacity:0.95;margin-top:6px;}
 
-    header{
-        background:linear-gradient(135deg,var(--primary),var(--accent));
-        color:white;padding:24px 20px;text-align:center;
-        margin-top:calc(env(safe-area-inset-top) + 85px);
-    }
-    h1{font-size:25px;font-weight:800;margin:0;}
-    .subtitle{font-size:15px;opacity:0.95;margin-top:6px;}
+/* FAB */
+.fab{
+    position:fixed;bottom:max(22px,env(safe-area-inset-bottom));right:22px;
+    background:var(--primary);color:white;
+    width:58px;height:58px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 5px 18px rgba(0,0,0,0.35);z-index:998;cursor:pointer;
+    opacity:0;visibility:hidden;
+    transition:all .4s cubic-bezier(0.4,0,0.2,1);
+}
+.fab.show{opacity:1;visibility:visible;}
+.fab svg{stroke:white;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;width:34px;height:34px;}
 
-    /* FAB */
-    .fab{
-        position:fixed;bottom:max(22px,env(safe-area-inset-bottom));right:22px;
-        background:var(--primary);color:white;
-        width:58px;height:58px;border-radius:50%;
-        display:flex;align-items:center;justify-content:center;
-        box-shadow:0 5px 18px rgba(0,0,0,0.35);z-index:998;cursor:pointer;
-        opacity:0;visibility:hidden;
-        transition:all .4s cubic-bezier(0.4,0,0.2,1);
-    }
-    .fab.show{opacity:1;visibility:visible;}
-    .fab:hover{transform:translateY(-6px);box-shadow:0 12px 28px rgba(211,84,0,0.5);}
-    .fab svg{stroke:white;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;width:34px;height:34px;}
+/* Modal */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;justify-content:center;align-items:center;}
+.modal-content{background:var(--card);margin:20px;padding:24px;border-radius:16px;max-width:90%;max-height:85%;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.35);position:relative;text-align:center;}
+.close{position:absolute;top:8px;right:15px;font-size:32px;color:var(--sub);cursor:pointer;}
 
-    /* Modal */
-    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;justify-content:center;align-items:center;}
-    .modal-content{background:var(--card);margin:20px;padding:24px;border-radius:16px;max-width:90%;max-height:85%;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.35);position:relative;text-align:center;}
-    .close{position:absolute;top:8px;right:15px;font-size:32px;color:var(--sub);cursor:pointer;}
+#vjw-modal img {
+    max-width: 250px;
+    width: 85%;
+    height: auto;
+    margin: 15px auto;
+    display: block;
+    border: 4px solid var(--card);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
 
-    #vjw-modal img {
-        max-width: 250px;
-        width: 85%;
-        height: auto;
-        margin: 15px auto;
-        display: block;
-        border: 4px solid var(--card);
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
+/* Timeline */
+.container{max-width:600px;margin:0 auto;padding:0 15px;}
+.day-group{margin:20px 0;}
+.day-header{background:var(--card);padding:16px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 10px rgba(0,0,0,0.09);cursor:pointer;border-left:6px solid var(--primary);user-select:none;}
+.day-title{font-weight:bold;font-size:16.5px;}
+.toggle{font-size:24px;transition:transform .3s;}
+.active .toggle {transform: rotate(180deg);}
+.spots {display: none; padding-left: 14px; border-left: 2px solid #ddd; margin-left: 15px; margin-top: 12px;}
+.active .spots {display: block;}
 
-    /* Timeline */
-    .container{max-width:600px;margin:0 auto;padding:0 15px;}
-    .day-group{margin:20px 0;}
-    .day-header{background:var(--card);padding:16px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 10px rgba(0,0,0,0.09);cursor:pointer;border-left:6px solid var(--primary);user-select:none;}
-    .day-title{font-weight:bold;font-size:16.5px;}
-    .toggle{font-size:24px;transition:transform .3s;}
-    .active .toggle {transform: rotate(180deg);}
-    .spots {display: none; padding-left: 14px;
-    border-left: 2px solid #ddd; margin-left: 15px; margin-top: 12px;}
-    .active .spots {display: block;}
+.spot {background: var(--card); margin: 14px 0 14px 16px; padding: 15px; border-radius: 14px; position: relative; box-shadow: 0 3px 8px rgba(0,0,0,0.07);}
+.spot::before {content: ''; position: absolute; left: -22px; top: 20px; width: 11px; height: 11px; border-radius: 50%; background: var(--sub); border: 2.5px solid var(--bg);}
+.spot.sunq::before {background: var(--sunq);}
+.spot.jr::before {background: var(--jr);}
+.spot.dazaifu::before {background: var(--dazaifu);}
+.spot.money::before {background: var(--money);} /* 新增換匯圓點 */
 
-    .spot {background: var(--card); margin: 14px 0 14px 16px; padding: 15px;
-    border-radius: 14px; position: relative; box-shadow: 0 3px 8px rgba(0,0,0,0.07);}
-    .spot::before {content: ''; position: absolute; left: -22px; top: 20px; width: 11px;
-    height: 11px; border-radius: 50%; background: var(--sub); border: 2.5px solid var(--bg);}
-    .spot.sunq::before {background: var(--sunq);}
-    .spot.jr::before {background: var(--jr);}
-    .spot.dazaifu::before {background: var(--dazaifu);}
-    .spot.exchange::before {background: #f1c40f; border-color: #f39c12;}
+.time {background: var(--card); color: var(--sub); padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 600; margin-bottom: 7px; display: inline-block;}
+.title {font-size: 16.5px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;}
+.check {width: 21px; height: 21px; border: 2.5px solid #ccc; border-radius: 50%; margin-right: 11px; cursor: pointer; flex-shrink: 0;}
+.done .check {background: var(--primary); border-color: var(--primary); position: relative;}
+.done .check::after {content: '✓'; color: white; font-size: 13px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);}
+.done .title {text-decoration: line-through; opacity: 0.6;}
 
-    .time {background: var(--card); color: var(--sub);
-    padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 600; margin-bottom: 7px; display: inline-block;}
-    .title {font-size: 16.5px; font-weight: 600; display: flex;
-    align-items: center; justify-content: space-between;}
-    .check {width: 21px; height: 21px; border: 2.5px solid #ccc; border-radius: 50%; margin-right: 11px; cursor: pointer;
-    flex-shrink: 0;}
-    .done .check {background: var(--primary); border-color: var(--primary); position: relative;}
-    .done .check::after {content: '✓'; color: white; font-size: 13px; position: absolute; top: 50%;
-    left: 50%; transform: translate(-50%, -50%);}
-    .done .title {text-decoration: line-through; opacity: 0.6;}
+.content {font-size: 14px; color: var(--sub); line-height: 1.6; margin: 7px 0;}
+.content a {color: #3498db; text-decoration: underline;}
 
-    .content {font-size: 14px; color: var(--sub); line-height: 1.6;
-    margin: 7px 0;}
-    .content a {color: #3498db; text-decoration: underline;}
+.tags {display: flex; gap: 7px; flex-wrap: wrap; margin-top: 9px; font-size: 11.5px;}
+.tag {padding: 4px 9px; border-radius: 5px;}
+.tag.pass {background: #e8f5e9; color: #1a7431;}
+.tag.save {background: #f0f8ff; color: #0066cc; font-weight: 700;}
 
-    .tags {display: flex; gap: 7px; flex-wrap: wrap; margin-top: 9px;
-    font-size: 11.5px;}
-    .tag {padding: 4px 9px; border-radius: 5px;}
-    .tag.pass {background: #e8f5e9; color: #1a7431;}
-    .tag.save {background: #f0f8ff; color: #0066cc; font-weight: 700;}
-    .tag.money {background: #fff9c4; color: #f39c12; font-weight: 700;}
+.map {background: #3498db; color: white; padding: 5px 9px; border-radius: 5px; font-size: 10.5px; cursor: pointer; border: none;}
 
-    .map {background: #3498db;
-    color: white; padding: 5px 9px; border-radius: 5px; font-size: 10.5px; cursor: pointer;
-    border: none;}
+/* Distance & Icon */
+.dist-display {
+    font-size: 12px;
+    color: var(--primary);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+}
+.dist-icon {
+    font-size: 14px;
+    margin-right: 4px;
+    width: 20px;
+    text-align: center;
+}
 
-    /* Footer */
-    footer {
-        text-align: center;
-        padding: 40px 20px;
-        font-size: 13px;
-        color: var(--sub);
-        background: var(--bg);
-        width: 100%;
-        border-top: 1px solid rgba(0,0,0,0.05);
-        margin-top: 40px;
-    }
-    footer p {
-        margin: 8px 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-    footer a {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: bold;
-        margin: 0 4px;
-    }
-    footer a:hover {
-        text-decoration: underline;
-    }
-</style>
-</head> <body>
+/* Footer */
+footer {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 13px;
+    color: var(--sub);
+    background: var(--bg);
+    width: 100%;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    margin-top: 40px;
+}
+footer p {
+    margin: 8px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 4px;
+}
+    </style>
+</head>
+<body>
 
-<div class="pass-bar" id="pass-bar"></div>
-
+<div class="pass-bar" id="passBar"></div>
 <div class="fab" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 15l-6-6-6 6"/></svg>
 </div>
 
 <div id="vjw-modal" class="modal" onclick="toggleVjwModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <span class="close" onclick="toggleVjwModal()">×</span>
         <h3>入境 QR Code</h3>
-        <img id="vjw-img" src="" alt="VJW QR">
-        <p style="margin-top:10px;color:var(--sub)">請截圖保存以備不時之需</p>
+        <div id="vjw-img-container"></div>
+        <p style="margin-top:15px;font-size:13px;color:var(--sub)">請截圖保存以備離線使用</p>
     </div>
 </div>
 
 <div id="flight-modal" class="modal" onclick="closeAllModals()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <span class="close" onclick="closeAllModals()">×</span>
-        <h3>航班資訊</h3>
-        <div id="flight-info" style="white-space: pre-wrap; margin-top: 15px; text-align: left; line-height: 1.6;"></div>
+        <h3>班機資訊</h3>
+        <p id="flight-info" style="white-space: pre-line; margin-top:15px; text-align:left; line-height:1.6;"></p>
     </div>
 </div>
 
 <div id="modal" class="modal" onclick="closeAllModals()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <span class="close" onclick="closeAllModals()">×</span>
-        <h3 id="modal-title" style="margin-bottom:12px;color:var(--primary)"></h3>
-        <p id="modal-info" style="text-align:left;margin-bottom:12px;"></p>
-        <p id="modal-benefits" style="color:#d35400;font-weight:bold;font-size:13px;background:#fff3e0;padding:8px;border-radius:8px;"></p>
+        <h3 id="modal-title"></h3>
+        <p id="modal-info" style="margin:15px 0;line-height:1.6;"></p>
+        <p id="modal-benefits" style="color:var(--primary);font-weight:bold;font-size:14px;"></p>
     </div>
 </div>
 
 <header>
-    <h1 id="main-title">載入中...</h1>
-    <div class="subtitle" id="sub-title"></div>
+    <h1 id="header-title"></h1>
+    <div class="subtitle" id="header-subtitle"></div>
 </header>
 
 <div class="container" id="timeline"></div>
@@ -198,281 +208,304 @@
 <footer id="footer"></footer>
 
 <script>
-    const tripData = {
-      'title': '2026 香港-澳門 摘星食旅 (天氣優化版)',
-      'subtitle': '2/6 氣溫15-19°C 偏涼微雨，請帶薄外套',
-      'passes': {
-        'octopus': {
-          'tag': '八達通<br>全港通',
-          'title': '八達通卡 (Octopus)',
-          'info': '香港必備交通卡，可用於地鐵、巴士、叮叮車、天星小輪及便利商店付款。',
-          'benefits': '便利商店、自動販賣機皆可使用'
-        },
-        'weather': {
-          'tag': '天氣預報<br>15-19°C',
-          'title': '旅途天氣提示 (2/6-2/10)',
-          'info': '氣溫舒適(15-19°C)，多雲偶有微雨。<br>D2(六) 太平山可能有霧，建議下午前往。<br>D4(一) 澳門天氣穩定，適合步行。',
-          'benefits': '建議穿著：長袖+薄防風外套'
-        },
-        'macau_ferry': {
-          'tag': '澳門船票<br>上環出發',
-          'title': '噴射飛航 / 金光飛航',
-          'info': '上環港澳碼頭 ↔ 澳門外港/氹仔客運碼頭。<br>單程約 HK$160-175，航程約 55 分鐘。',
-          'benefits': 'D4 週一出發避開人潮'
-        }
-      },
-      'vjw': {
-        'enabled': false
-      },
-      'emergency': {
-        'title': '緊急聯絡（香港/澳門）',
-        'info': '香港報警/火警/急救：999<br>澳門報警/火警/急救：999<br>台北駐香港辦事處：+852-2525-8316<br>信用卡掛失：<br>國泰世華：+886-2-8073-1515<br>台新：+886-2-2655-3355'
-      },
-      'flight': {
-        'enabled': true,
-        'info': '去程 BR871 (EVA Air)\n2/6 16:35 TPE 桃園 T2 → 18:25 HKG 香港 T1\n\n回程 BR810 (EVA Air)\n2/10 21:50 HKG 香港 T1 → 23:35 TPE 桃園 T2'
-      },
-      'footer': {
-        'enabled': true,
-        'text': "<p>© 2026 Created by <a href='[https://www.instagram.com/tsaibigbrother/](https://www.instagram.com/tsaibigbrother/)' target='_blank'>TsaiBigBrother 蔡大哥</a></p><p>參考來源：<a href='#' target='_blank'>香港天文台 / 澳門旅遊局</a></p><p>本行程由 AI 輔助規劃並採用 <b>蔡大哥旅遊模板</b> 製作</p>"
-      },
-      'days': [
-        {
-          'd': 'D1', 'date': '2/6（五）', 'title': '抵達香港 灣仔燒臘',
-          'spots': [
-            { 't': '16:35', 'title': 'TPE 起飛 BR871', 'c': '預計 18:25 抵達香港赤鱲角機場', 'lat': 25.0797, 'lng': 121.2342 },
-            { 't': '19:00', 'title': '機場快線 → 香港站', 'c': '氣溫約17°C，微涼。<br><b onclick="closeAllModals();document.getElementById(\'flight-modal\').style.display=\'flex\'">點這裡查看班機詳情</b>', 'lat': 22.3159, 'lng': 113.9365 },
-            { 't': '20:00', 'title': '入住 六國酒店 (Gloucester Luk Kwok)', 'c': '灣仔告士打道72號，近港鐵灣仔站', 'stay': true, 'lat': 22.2783, 'lng': 114.1730 },
-            { 't': '20:45', 'title': '再興燒臘飯店 (或華星冰室)', 'c': '晚餐建議。若需少量現金，可先在機場或酒店附近 ATM 提領。', 'lat': 22.2785, 'lng': 114.1764 }
-          ]
-        },
-        {
-          'd': 'D2', 'date': '2/7（六）', 'title': '上環換匯 + 太平山夜景',
-          'spots': [
-            { 't': '09:00', 'title': 'Bakehouse 灣仔店', 'c': '早餐：必吃酸種蛋塔 (Sourdough Egg Tart)', 'lat': 22.2773, 'lng': 114.1718 },
-            { 't': '10:00', 'title': '上環 牛記找換店 (換錢)', 'c': '<b>最優匯率推薦！</b><br>週六營業至13:00，請務必上午前往。<br>地址：上環急庇利街1號', 'lat': 22.2867, 'lng': 114.1513, 'type': 'exchange', 'pass': 'HKD 現金', 'save': 200 },
-            { 't': '10:30', 'title': '檸檬王 + 曲奇四重奏', 'c': '上環永吉街買伴手禮 (甘草檸檬)，剛好在換錢所附近', 'lat': 22.2855, 'lng': 114.1534 },
-            { 't': '12:00', 'title': '九記牛腩 / 勝香園', 'c': '中環午餐，勝香園大排檔 (若下雨改九記)', 'lat': 22.2840, 'lng': 114.1524 },
-            { 't': '16:30', 'title': '太平山頂 纜車/巴士', 'c': '<b>天氣注意：</b>若山頂雲層太厚，改為維多利亞港邊散步。<br>搭纜車上山，欣賞百萬夜景', 'lat': 22.2777, 'lng': 114.1592 },
-            { 't': '20:00', 'title': '坤記煲仔小菜', 'c': '西營盤名店，炭爐煲仔飯 (人多需排隊)', 'lat': 22.2866, 'lng': 114.1416 }
-          ]
-        },
-        {
-          'd': 'D3', 'date': '2/8（日）', 'title': '沙田賽馬 與 懷舊九龍',
-          'spots': [
-            { 't': '09:30', 'title': '澳洲牛奶公司', 'c': '佐敦早餐：炒蛋多士、燉奶', 'lat': 22.3044, 'lng': 114.1706 },
-            { 't': '12:00', 'title': '沙田馬場 賽馬體驗', 'c': '<b>週日賽事日</b>：搭東鐵線至馬場站。<br>戶外活動，今日降雨機率低，適合觀賽。', 'lat': 22.4010, 'lng': 114.2050 },
-            { 't': '16:00', 'title': '深水埗 合益泰小食', 'c': '滑溜腸粉，體驗地道老香港', 'lat': 22.3308, 'lng': 114.1624 },
-            { 't': '17:30', 'title': '嘉多娜麵包店', 'c': '油麻地碧街，法式布甸麵包 (必買)', 'lat': 22.3134, 'lng': 114.1704 },
-            { 't': '19:00', 'title': '旺角掃街 + 佳佳甜品', 'c': '肥姐小食店、通達食店、佳佳甜品 (芝麻糊)', 'lat': 22.3056, 'lng': 114.1697 }
-          ]
-        },
-        {
-          'd': 'D4', 'date': '2/9（一）', 'title': '澳門一日遊 (免費接駁攻略)',
-          'spots': [
-            { 't': '09:00', 'title': '上環港澳碼頭 → 澳門外港', 'c': '搭噴射飛航，約60分抵達澳門外港碼頭。<br><b>避開週末人潮，通關順暢。</b>', 'pass': 'macau_ferry', 'lat': 22.2882, 'lng': 114.1523 },
-            { 't': '10:30', 'title': '接駁車：外港 → 新葡京/葡京', 'c': '<b>省錢攻略：</b>出碼頭搭乘「新葡京/葡京」免費發財車。<br>下車後步行至議事亭前地。', 'pass': '免費接駁', 'lat': 22.1897, 'lng': 113.5444 },
-            { 't': '11:00', 'title': '大三巴牌坊 + 戀愛巷', 'c': '議事亭前地 → 玫瑰堂 → 大三巴。<br>沿途試吃肉乾、杏仁餅。', 'lat': 22.1976, 'lng': 113.5421 },
-            { 't': '13:00', 'title': '步行 → 星際酒店/永利', 'c': '從大三巴走回葡京附近。<br>建議走到「星際酒店 (Starworld)」', 'lat': 22.1905, 'lng': 113.5460 },
-            { 't': '13:30', 'title': '接駁車：星際 → 銀河/威尼斯人', 'c': '<b>跨島移動：</b>搭星際酒店接駁車往「澳門銀河」。<br>抵達路氹城 (Cotai) 區域。', 'pass': '免費接駁', 'lat': 22.1495, 'lng': 113.5539 },
-            { 't': '15:00', 'title': '威尼斯人 + 倫敦人 + 巴黎人', 'c': '步行參觀三塔：大笨鐘、艾菲爾鐵塔、運河。<br>安德魯蛋塔(威尼斯人店)下午茶。', 'lat': 22.1468, 'lng': 113.5650 },
-            { 't': '18:30', 'title': '接駁車：威尼斯人 → 氹仔碼頭', 'c': '搭西翼大堂接駁車前往「氹仔客運碼頭」。', 'pass': '免費接駁', 'lat': 22.1614, 'lng': 113.5750 },
-            { 't': '19:30', 'title': '氹仔碼頭 → 上環', 'c': '搭金光飛航返回香港。晚餐吃甘牌燒鵝(外帶)或一蘭。', 'pass': 'macau_ferry', 'lat': 22.2882, 'lng': 114.1523 }
-          ]
-        },
-        {
-          'd': 'D5', 'date': '2/10（二）', 'title': '懷舊飲茶 最後衝刺',
-          'spots': [
-            { 't': '09:00', 'title': '六安居 (蓮香居)', 'c': '上環早茶，體驗傳統推車仔點心', 'lat': 22.2872, 'lng': 114.1485 },
-            { 't': '11:00', 'title': '珍妮曲奇 Jenny Bakery', 'c': '上環店買小熊餅乾 (早去避開排隊)', 'lat': 22.2838, 'lng': 114.1530 },
-            { 't': '13:00', 'title': '維多利亞港 海傍散步', 'c': '<b>天氣預報：</b>19°C 舒適，適合最後拍照。<br>可搭天星小輪遊港。', 'lat': 22.2936, 'lng': 114.1718 },
-            { 't': '15:30', 'title': '返回飯店拿行李 → 機場', 'c': '預計 16:30 出發前往機場。<br>退八達通、逛機場免稅店。', 'lat': 22.2783, 'lng': 114.1730 },
-            { 't': '21:50', 'title': 'BR810 起飛 HKG → TPE', 'c': '<b onclick="closeAllModals();document.getElementById(\'flight-modal\').style.display=\'flex\'">點這裡查看班機詳情</b>', 'lat': 22.3080, 'lng': 113.9185 }
-          ]
-        }
+const tripData = {
+  "title": "2026 港澳 5日遊 - TsaiBigBrother",
+  "subtitle": "2/6 TPE→HKG (BR871) | 2/10 HKG→TPE (BR810)",
+  "passes": {
+    "money": {
+      "tag": "換匯攻略<br>週六注意",
+      "title": "💰 港澳換錢攻略",
+      "info": "<div style='text-align:left;'><b>⚠️ 週六下午 1-2 點後，匯率優的老店會關門！</b><br><br><b>1. D1 週五晚 (機場)：</b><br>使用 ATM (銀通/HSBC) 提領少量現金。<br><br><b>2. D2 週六早 (09:00-13:00)：</b><br>📍 <b>上環牛記</b> 或 <b>尖沙咀堅成</b> (匯率最優)。<br><br><b>3. D2 週六午 (14:00後)：</b><br>📍 <b>油麻地飛鳥找換</b> (開到晚上) 或 重慶大廈內部店家。<br><br>💡 澳門通用港幣，不需特地換澳門幣。</div>",
+      "benefits": "務必注意週六營業時間！"
+    },
+    "sunq": {
+      "tag": "八達通<br>全港通",
+      "title": "八達通 (Octopus)",
+      "info": "香港必備！地鐵、巴士、渡輪、便利商店、餐廳皆通用。<br>建議於機場快線櫃台或便利商店購買。",
+      "benefits": "全港通用，省去購票時間"
+    },
+    "jr": {
+      "tag": "噴射飛航<br>港澳船票",
+      "title": "噴射飛航 (TurboJET)",
+      "info": "香港上環 ↔ 澳門外港碼頭。<br>航程約 55 分鐘，建議提前線上預訂以確保座位。",
+      "benefits": "快速往返，避開人潮"
+    },
+    "dazaifu": {
+      "tag": "昂坪360<br>纜車",
+      "title": "昂坪 360 纜車",
+      "info": "東涌 ↔ 昂坪市集。<br>建議購買水晶車廂，視野極佳，可俯瞰大嶼山與機場。",
+      "benefits": "熱門景點，建議預約"
+    }
+  },
+  "vjw": {
+    "enabled": false,
+    "image": "",
+    "valid": ""
+  },
+  "emergency": {
+    "title": "緊急聯絡（港澳）",
+    "info": "香港報案/火警/急救：999<br>澳門報案/火警/急救：999<br>台北駐香港辦事處：+852-2525-8316<br>台北駐澳門辦事處：+853-2830-6289"
+  },
+  "flight": {
+    "enabled": true,
+    "info": "去程 BR871 (EVA AIR)\n2/6 16:35 TPE → 18:30 HKG\n\n回程 BR810 (EVA AIR)\n2/10 21:50 HKG → 23:35 TPE"
+  },
+  "footer": {
+    "enabled": true,
+    "text": "<p>© 2026 Created by <a href='#' target='_blank'>TsaiBigBrother 蔡大哥</a></p><p>本行程由 AI 輔助規劃並採用 <b>蔡大哥旅遊模板</b> 製作</p>"
+  },
+  "days": [
+    {
+      "d": "D1", "date": "2/6（五）", "title": "抵達香港 → 灣仔雨備",
+      "spots": [
+        { "t": "16:35", "title": "TPE 起飛 (BR871)", "c": "預計 18:30 抵達 HKG<br><b onclick=\"closeAllModals();document.getElementById('flight-modal').style.display='flex'\">點這裡查看班機資訊</b>", "lat": 25.0797, "lng": 121.2342, "move": "plane" },
+        { "t": "18:30", "title": "抵達香港機場 HKG", "c": "通關＋行李約45分。前往機場快線/巴士站。", "lat": 22.3080, "lng": 113.9185, "move": "walk" },
+        { "t": "19:30", "title": "前往灣仔 六國酒店", "c": "搭乘 A11 巴士或機場快線轉地鐵至灣仔站。", "pass": "八達通", "type": "sunq", "lat": 22.2783, "lng": 114.1717, "move": "bus" },
+        { "t": "20:30", "title": "晚餐：再興燒臘", "c": "灣仔經典燒臘，步行可達。必點叉燒飯。", "lat": 22.2787, "lng": 114.1755, "move": "walk" },
+        { "t": "21:30", "title": "宵夜：佳佳甜品", "c": "米其林推薦中式糖水 (若灣仔無分店可改Bakehouse)。", "lat": 22.2770, "lng": 114.1725, "move": "walk" },
+        { "t": "22:00", "title": "換錢所 & 採買", "c": "確保前兩天現金充足。灣仔區找換店匯率普通，建議先換少量。", "type": "money", "lat": 22.2770, "lng": 114.1725, "move": "walk" }
       ]
-    };
+    },
+    {
+      "d": "D2", "date": "2/7（六）", "title": "中環文藝 & 太平山夜景",
+      "spots": [
+        { "t": "09:00", "title": "早餐：六安居 (原蓮香居)", "c": "上環。體驗傳統推車點心。", "lat": 22.2872, "lng": 114.1485, "move": "mtr" },
+        { "t": "10:00", "title": "🔥 換匯首選：牛記找換", "c": "<b>週六 13:00 關門！</b>就在上環。若沒開請去尖沙咀堅成(開到14:00)或油麻地飛鳥(開到晚上)。", "type": "money", "lat": 22.2865, "lng": 114.1515, "move": "walk" },
+        { "t": "10:30", "title": "中環半山扶手電梯", "c": "途經：石板街、嘉咸街壁畫、大館。", "lat": 22.2830, "lng": 114.1550, "move": "walk" },
+        { "t": "12:00", "title": "伴手禮：珍妮曲奇 & 檸檬王", "c": "上環永和街。買完建議先寄物或回飯店。", "lat": 22.2855, "lng": 114.1520, "move": "walk" },
+        { "t": "13:00", "title": "午餐：勝香園", "c": "中環大排檔。番茄通粉。(雨備：蘭芳園/九記牛腩)", "lat": 22.2843, "lng": 114.1528, "move": "walk" },
+        { "t": "15:00", "title": "怪獸大廈 (海山樓)", "c": "地鐵太古站。打卡熱點。", "lat": 22.2842, "lng": 114.2124, "move": "mtr" },
+        { "t": "17:30", "title": "太平山頂纜車", "c": "中環花園道。前往凌霄閣看夜景。", "pass": "山頂纜車", "type": "dazaifu", "lat": 22.2775, "lng": 114.1585, "move": "taxi" },
+        { "t": "20:00", "title": "晚餐：華星冰室", "c": "灣仔店。黑松露炒蛋多士。", "lat": 22.2780, "lng": 114.1760, "move": "taxi" }
+      ]
+    },
+    {
+      "d": "D3", "date": "2/8（日）", "title": "沙田馬場 & 九龍精華",
+      "spots": [
+        { "t": "09:00", "title": "早餐：澳洲牛奶公司", "c": "佐敦。蛋白燉鮮奶、炒蛋。", "lat": 22.3046, "lng": 114.1705, "move": "mtr" },
+        { "t": "11:00", "title": "沙田馬場", "c": "地鐵馬場站。週日賽事日，體驗現場氛圍。", "lat": 22.4000, "lng": 114.2050, "move": "mtr" },
+        { "t": "16:00", "title": "旺角街頭", "c": "金魚街、波鞋街、女人街。小吃：肥姐、通達食店。", "lat": 22.3195, "lng": 114.1694, "move": "mtr" },
+        { "t": "19:00", "title": "維多利亞港 & 星光大道", "c": "尖沙咀海旁。散步看夜景。", "lat": 22.2935, "lng": 114.1730, "move": "bus" },
+        { "t": "20:30", "title": "晚餐：廟街夜市", "c": "興記煲仔飯。感受大排檔。", "lat": 22.3060, "lng": 114.1695, "move": "walk" }
+      ]
+    },
+    {
+      "d": "D4", "date": "2/9（一）", "title": "澳門一日遊 (平日)",
+      "spots": [
+        { "t": "09:00", "title": "上環港澳碼頭", "c": "搭乘噴射飛航前往澳門。", "pass": "TurboJET", "type": "jr", "lat": 22.2885, "lng": 114.1520, "move": "mtr" },
+        { "t": "10:30", "title": "抵達澳門外港碼頭", "c": "轉乘「威尼斯人」免費接駁車。", "lat": 22.1965, "lng": 113.5555, "move": "ship" },
+        { "t": "11:30", "title": "威尼斯人 / 倫敦人", "c": "路氹城。賭場體驗 (新手推薦威尼斯人)。", "lat": 22.1470, "lng": 113.5600, "move": "bus" },
+        { "t": "14:00", "title": "澳門半島古蹟", "c": "搭接駁車至新葡京。步行至大三巴、議事亭前地。", "lat": 22.1975, "lng": 113.5405, "move": "bus" },
+        { "t": "17:30", "title": "返回香港", "c": "搭接駁車回碼頭，搭船返港。", "pass": "TurboJET", "type": "jr", "lat": 22.1965, "lng": 113.5555, "move": "bus" },
+        { "t": "20:00", "title": "晚餐：一點心", "c": "太子站。平價米其林點心。", "lat": 22.3245, "lng": 114.1680, "move": "mtr" }
+      ]
+    },
+    {
+      "d": "D5", "date": "2/10（二）", "title": "大嶼山 & Bakehouse 採買",
+      "spots": [
+        { "t": "09:30", "title": "飯店 Check-out", "c": "搭地鐵/巴士前往東涌 (約 50 分)。", "lat": 22.2783, "lng": 114.1717, "move": "walk" },
+        { "t": "10:30", "title": "東涌 Citygate 寄物", "c": "地鐵東涌站。B2 或南面置物櫃寄放行李。", "lat": 22.2895, "lng": 113.9410, "move": "mtr" },
+        { "t": "11:00", "title": "昂坪 360 纜車", "c": "水晶車廂。前往昂坪市集、大佛。", "pass": "昂坪纜車", "type": "dazaifu", "lat": 22.2905, "lng": 113.9385, "move": "cable" },
+        { "t": "13:30", "title": "大澳漁村", "c": "搭 21 號巴士。棚屋、沙翁、小艇。", "lat": 22.2535, "lng": 113.8630, "move": "bus" },
+        { "t": "16:30", "title": "返回東涌 & 取行李", "c": "搭 11 號巴士回到東薈城。取出行李。", "lat": 22.2895, "lng": 113.9410, "move": "bus" },
+        { "t": "17:30", "title": "Bakehouse (東薈城店)", "c": "<b>回程必買！</b>位於東薈城2樓。買完直接放入手提行李上機，保證新鮮又不怕壓壞。", "lat": 22.2895, "lng": 113.9410, "save": "必買", "move": "walk" },
+        { "t": "19:00", "title": "前往機場 (BR810)", "c": "搭 S1 巴士至機場。21:50 起飛。", "lat": 22.3080, "lng": 113.9185, "move": "bus" }
+      ]
+    }
+  ]
+};
 
-    // DOM Elements
-    const timeline = document.getElementById('timeline');
-    const passBar = document.getElementById('pass-bar');
-    const fab = document.getElementById('backToTop');
-    const modal = document.getElementById('modal');
-    const vjwModal = document.getElementById('vjw-modal');
+// 關閉所有 Modals
+function closeAllModals() {
+    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    document.querySelectorAll('.day-group').forEach(d => {
+        d.classList.remove('active');
+        d.querySelector('.toggle').innerText = '▼';
+    });
+}
 
-    // Close all modals
-    function closeAllModals() {
-        modal.style.display = 'none';
-        vjwModal.style.display = 'none';
-        document.getElementById('flight-modal').style.display = 'none';
-        document.querySelectorAll('.day-group').forEach(d => d.classList.remove('active'));
+// 開關 VJW Modal
+function toggleVjwModal() {
+    const modal = document.getElementById('vjw-modal');
+    modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+}
+
+// 單一展開行程
+function toggleDay(event) {
+    const header = event.currentTarget;
+    const currentGroup = header.parentElement;
+    const isActive = currentGroup.classList.contains('active');
+    closeAllModals(); // 收合其他
+    if (!isActive) {
+        currentGroup.classList.add('active');
+        header.querySelector('.toggle').innerText = '▲';
+    }
+}
+
+// 開啟地圖
+function openMap(lat, lng, name) {
+    let query = name;
+    if (!/站|機場|神社|寺|市|市場|橋|城|湖|岳|宮|酒店|飯店/i.test(name)) {
+        query += " 香港";
+    }
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}&ll=${lat},${lng}`, '_blank');
+}
+
+// 計算距離 (Haversine)
+function getDistance(lat1, lon1, lat2, lon2) {
+    if (!lat1 || !lat2) return 0;
+    const R = 6371; 
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return (R * c).toFixed(1);
+}
+
+// 取得交通 Icon
+function getMoveIcon(mode) {
+    switch(mode) {
+        case 'walk': return '🚶';
+        case 'mtr': return '🚇';
+        case 'bus': return '🚌';
+        case 'ship': return '⛴️';
+        case 'taxi': return '🚕';
+        case 'plane': return '✈️';
+        case 'cable': return '🚡';
+        default: return '🚗';
+    }
+}
+
+// Modal
+function openModal(e) {
+    const key = e.currentTarget.dataset.modal;
+    let title = "", info = "", benefits = "";
+
+    if (key === 'emergency' && tripData.emergency) {
+        title = tripData.emergency.title;
+        info = tripData.emergency.info;
+    } else if (tripData.passes[key]) {
+        title = tripData.passes[key].title;
+        info = tripData.passes[key].info;
+        benefits = tripData.passes[key].benefits;
+    } else {
+        return;
     }
 
-    // VJW Toggle
-    function toggleVjwModal() {
-        if (vjwModal.style.display === 'flex') {
-            vjwModal.style.display = 'none';
-        } else {
-            vjwModal.style.display = 'flex';
-        }
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-info').innerHTML = info;
+    document.getElementById('modal-benefits').textContent = benefits || '';
+    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    document.getElementById('modal').style.display = 'flex';
+}
+
+// Render
+function render() {
+    document.title = tripData.title;
+    document.getElementById('header-title').textContent = tripData.title;
+    document.getElementById('header-subtitle').textContent = tripData.subtitle;
+    if(tripData.flight && tripData.flight.enabled) {
+        document.getElementById('flight-info').textContent = tripData.flight.info;
     }
 
-    // Single Expansion Logic
-    function toggleDay(e) {
-        const current = e.currentTarget.parentElement;
-        const isActive = current.classList.contains('active');
-        
-        // Close all
-        document.querySelectorAll('.day-group').forEach(d => d.classList.remove('active'));
-        
-        // Toggle current
-        if (!isActive) {
-            current.classList.add('active');
-        }
+    // Passes
+    const passBar = document.getElementById('passBar');
+    let passHTML = '';
+    for (const [key, p] of Object.entries(tripData.passes)) {
+        passHTML += `<div class="pass-tag ${key}" data-modal="${key}">${p.tag}</div>`;
     }
-
-    // Open Info Modal
-    function openModal(e) {
-        e.stopPropagation();
-        const key = e.currentTarget.dataset.modal;
-        let title = '', info = '', benefits = '';
-
-        if (key === 'emergency' && tripData.emergency) {
-            title = tripData.emergency.title;
-            info = tripData.emergency.info;
-        } else if (tripData.passes[key]) {
-            const p = tripData.passes[key];
-            title = p.title;
-            info = p.info;
-            benefits = p.benefits;
-        } else {
-            return;
-        }
-
-        document.getElementById('modal-title').textContent = title;
-        document.getElementById('modal-info').innerHTML = info;
-        document.getElementById('modal-benefits').textContent = benefits || '';
-        document.getElementById('modal-benefits').style.display = benefits ? 'block' : 'none';
-        
-        closeAllModals(); // Close others/accordions
-        modal.style.display = 'flex';
+    if (tripData.emergency) {
+        passHTML += `<div class="pass-tag emergency" data-modal="emergency">緊急聯絡</div>`;
     }
+    passBar.innerHTML = passHTML;
 
-    // Open Map
-    function openMap(lat, lng, name) {
-        // Check keywords for suffix
-        const suffix = /站|機場|神社|寺|市|市場|橋|城|湖|岳|宮|酒店|飯店|碼頭/i.test(name) ? '' : ' 香港';
-        const query = name + suffix;
-        const url = `https://www.google.com/maps/search/?api=1&query=$?q=${encodeURIComponent(query)}&ll=${lat},${lng}`;
-        window.open(url, '_blank');
-    }
-
-    // Render Page
-    function render() {
-        // Header
-        document.getElementById('main-title').textContent = tripData.title;
-        document.getElementById('sub-title').textContent = tripData.subtitle;
-        document.title = tripData.title;
-
-        // Passes
-        let passHtml = '';
-        for (const [key, p] of Object.entries(tripData.passes)) {
-            passHtml += `<div class="pass-tag ${key}" data-modal="${key}">${p.tag}</div>`;
-        }
-        // VJW
-        if (tripData.vjw && tripData.vjw.enabled) {
-            passHtml += `<div class="pass-tag vjw" onclick="toggleVjwModal()">入境 QR<br>VJW</div>`;
-            document.getElementById('vjw-img').src = tripData.vjw.image;
-        }
-        // Emergency
-        if (tripData.emergency) {
-            passHtml += `<div class="pass-tag emergency" data-modal="emergency">緊急<br>求助</div>`;
-        }
-        passBar.innerHTML = passHtml;
-
-        // Flight Info
-        if (tripData.flight && tripData.flight.enabled) {
-            document.getElementById('flight-info').textContent = tripData.flight.info;
-        }
-
-        // Timeline
-        let html = '';
-        tripData.days.forEach((day, index) => {
-            html += `
-            <div class="day-group ${index === 0 ? 'active' : ''}">
-                <div class="day-header" onclick="toggleDay(event)">
-                    <div>
-                        <div class="day-title">${day.d} ${day.title}</div>
-                        <div style="font-size:12px;color:var(--sub)">${day.date}</div>
-                    </div>
-                    <div class="toggle">▼</div>
-                </div>
-                <div class="spots">
-            `;
-            
-            day.spots.forEach(s => {
-                let tags = '';
-                if (s.pass) {
-                    if (s.cost && s.save) {
-                        tags += `<span class="tag pass">${s.pass} 涵蓋 <s>¥${s.cost}</s></span> <span class="tag save">省 ¥${s.save}</span>`;
-                    } else {
-                        if (s.type === 'exchange') {
-                            tags += `<span class="tag money">💰 匯率優選</span> <span class="tag save">預估省 HK$${s.save}</span>`;
-                        } else {
-                            tags += `<span class="tag pass">${s.pass}</span>`;
-                        }
-                    }
-                }
-                
-                let mapBtn = '';
-                if (s.lat && s.lng) {
-                    mapBtn = `<button class="map" onclick="event.stopPropagation();openMap(${s.lat},${s.lng},'${s.title.replace(/'/g,"\\'")}')">地圖</button>`;
-                }
-
-                const typeClass = s.type ? s.type : '';
-                
-                html += `
-                <div class="spot ${typeClass}" onclick="this.classList.toggle('done')">
-                    <div class="time">${s.t}</div>
-                    <div class="title">
-                        <div style="display:flex;align-items:center;">
-                            <div class="check"></div>
-                            <span>${s.title}</span>
-                        </div>
-                        ${mapBtn}
-                    </div>
-                    <div class="content">${s.c}</div>
-                    <div class="tags">${tags}</div>
-                </div>
-                `;
-            });
-            
-            html += `</div></div>`;
-        });
-        timeline.innerHTML = html;
-
-        // Footer
-        if (tripData.footer && tripData.footer.enabled) {
-            document.getElementById('footer').innerHTML = tripData.footer.text;
-        }
-
-        // Bind Events
-        document.querySelectorAll('.pass-tag[data-modal]').forEach(el => {
-            el.addEventListener('click', openModal);
-        });
-    }
-
-    // Scroll FAB
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-            fab.classList.add('show');
-        } else {
-            fab.classList.remove('show');
-        }
+    document.querySelectorAll('.pass-tag[data-modal]').forEach(tag => {
+        tag.addEventListener('click', openModal);
     });
 
-    // Init
-    render();
+    if (tripData.vjw && tripData.vjw.enabled) {
+        document.getElementById('vjw-img-container').innerHTML = `<img src="${tripData.vjw.image}" alt="QR Code">`;
+    }
 
+    // Timeline
+    const timeline = document.getElementById('timeline');
+    let html = '';
+
+    tripData.days.forEach(day => {
+        let spotsHTML = '';
+        let prevLat = null, prevLng = null;
+
+        day.spots.forEach((s, index) => {
+            let tags = '';
+            if (s.pass) tags += `<span class="tag pass">${s.pass}</span>`;
+            if (s.save) tags += `<span class="tag save">${s.save}</span>`;
+            
+            let mapBtn = '';
+            let distHTML = '';
+            
+            if (s.lat && s.lng) {
+                mapBtn = `<button class="map" onclick="event.stopPropagation();openMap(${s.lat},${s.lng},'${s.title.replace(/'/g,"\\'")}')">地圖</button>`;
+                
+                // 距離 & 交通方式
+                if (index > 0 && prevLat && prevLng) {
+                    const dist = getDistance(prevLat, prevLng, s.lat, s.lng);
+                    const moveIcon = getMoveIcon(s.move);
+                    distHTML = `<div class="dist-display"><span class="dist-icon">${moveIcon}</span> 距上一站: ${dist} km</div>`;
+                } else if (index === 0 && s.move === 'plane') {
+                     distHTML = `<div class="dist-display"><span class="dist-icon">✈️</span> 啟程</div>`;
+                }
+
+                prevLat = s.lat;
+                prevLng = s.lng;
+            }
+
+            let typeClass = s.type ? s.type : '';
+
+            spotsHTML += `
+            <div class="spot ${typeClass}" onclick="this.classList.toggle('done')">
+                <div class="time">${s.t}</div>
+                <div class="title">
+                    <div style="display:flex;align-items:center;">
+                        <div class="check"></div>
+                        <span>${s.title}</span>
+                    </div>
+                    ${mapBtn}
+                </div>
+                ${distHTML}
+                <div class="content">${s.c}</div>
+                <div class="tags">${tags}</div>
+            </div>`;
+        });
+
+        html += `
+        <div class="day-group">
+            <div class="day-header" onclick="toggleDay(event)">
+                <div>
+                    <div class="day-title">${day.d} ${day.title}</div>
+                    <div style="font-size:12px;color:var(--sub)">${day.date}</div>
+                </div>
+                <div class="toggle">▼</div>
+            </div>
+            <div class="spots">${spotsHTML}</div>
+        </div>`;
+    });
+
+    timeline.innerHTML = html;
+    if (tripData.footer && tripData.footer.enabled) {
+        document.getElementById('footer').innerHTML = tripData.footer.text;
+    }
+}
+
+window.addEventListener('scroll', () => {
+    const fab = document.getElementById('backToTop');
+    if (window.scrollY > 300) fab.classList.add('show');
+    else fab.classList.remove('show');
+});
+
+render();
 </script>
-</body> </html>
+
+</body>
+</html>
